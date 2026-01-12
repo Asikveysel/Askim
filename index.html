@@ -27,13 +27,17 @@ body{
 }
 .toast.show{top:18px}
 
-/* Kart */
+/* Container tıklama ALMAZ */
 .container{
     position:fixed;inset:0;
     display:flex;align-items:center;justify-content:center;
-    z-index:10; /* HER ŞEYİN ÜSTÜNDE */
+    pointer-events:none;
+    z-index:10;
 }
+
+/* Kart tıklama ALIR */
 .card{
+    pointer-events:auto;
     width:360px;max-width:92vw;padding:18px;
     border-radius:20px;background:rgba(0,0,0,.35);
     color:white;text-align:center;
@@ -47,19 +51,20 @@ h1{text-shadow:0 0 18px black,0 0 30px pink}
 .lock button{margin-top:8px;background:#ff4d6d;color:white}
 .secret{display:none;margin-top:12px}
 
-/* ❤️ KALPLER (ARKADA) */
+/* ❤️ Kalpler (arkada + tıklanabilir) */
 .heart{
     position:fixed;bottom:-60px;
     font-size:30px;
     animation:float 6s linear forwards;
     cursor:pointer;
-    z-index:1;
+    z-index:2;
+    pointer-events:auto;
 }
 @keyframes float{
     to{transform:translateY(-120vh);opacity:0}
 }
 
-/* 💥 PATLAMA */
+/* 💥 Patlama */
 .boom{
     animation:boom .45s ease-out forwards!important;
 }
@@ -72,7 +77,7 @@ h1{text-shadow:0 0 18px black,0 0 30px pink}
     position:fixed;color:white;
     animation:textUp 1.2s forwards;
     pointer-events:none;
-    z-index:2;
+    z-index:3;
 }
 @keyframes textUp{
     to{transform:translateY(-40px);opacity:0}
@@ -121,7 +126,7 @@ const toast=document.getElementById("toast");
 const showToast=m=>{
  toast.textContent=m;
  toast.classList.add("show");
- setTimeout(()=>toast.classList.remove("show"),2200);
+ setTimeout(()=>toast.classList.remove("show"),2600);
 };
 
 /* Sevgi yazıları */
@@ -131,10 +136,8 @@ const loveMessages=[
  "Gülüşüne kurban 🌸","Sana aşığım 💘"
 ];
 
-/* ❤️ Kalp sistemi */
-let interval;
-let paused=false;
-let broken=false;
+/* ❤️ Kalpler */
+let interval,paused=false,broken=false;
 
 function startHearts(){
  clearInterval(interval);
@@ -147,7 +150,7 @@ function startHearts(){
   h.style.left=Math.random()*100+"vw";
 
   h.onclick=e=>{
-    if(broken) return;          // 💔 PATLAMAZ
+    if(broken) return; // 💔 patlamaz
     if(h.dataset.dead) return;
     h.dataset.dead=1;
     h.classList.add("boom");
@@ -175,9 +178,8 @@ function check(){
 
  if(v==="17nisan"){
   secret.style.display="block";
-  showToast("💖 Kalpler düzeldi!");
-  broken=false;
-  paused=false;
+  showToast("💖 İşte bu… kalpler yine sana ait!");
+  broken=false; paused=false;
   startHearts();
   return;
  }
@@ -185,16 +187,15 @@ function check(){
  attempts++;
 
  if(attempts===1){
-  showToast("😐 Olsun meleklerde yanlış yapar…");
+  showToast("😇 Olsun… ilk seferin normal, olur böyle şeyler 💕");
  }
  else if(attempts===2){
   paused=true;
-  showToast("😶 Doğum günümü bilmiyormusun?…");
+  showToast("😐 Umarım bu bir şakadır… çünkü kalbim buna hazır değil");
  }
  else{
-  broken=true;
-  paused=false;
-  showToast("💔 Tamam öyle olsun.");
+  broken=true; paused=false;
+  showToast("😌 Tamam… öyle olsun, kalpler de kırılır bazen 💔");
  }
 }
 </script>
