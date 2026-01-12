@@ -96,7 +96,7 @@ h1{
 .heart::after{
     content:"";
     position:absolute;
-    inset:-18px;
+    inset:-20px;
 }
 
 @keyframes float{
@@ -155,19 +155,32 @@ h1{
 </div>
 
 <script>
-// 🔒 KESİN KİLİT
+// 🔒 Scroll kilidi
 document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 
-// Sayaçlar
-const start=new Date();start.setDate(start.getDate()-8);
-counter.innerHTML=`💞 Tanışalı ${Math.floor((Date.now()-start)/86400000)} gün oldu`;
+/* ⏱️ TARİH FONKSİYONU (SAAT SIFIRLAMA) */
+function dayOnly(d){
+    return new Date(d.getFullYear(),d.getMonth(),d.getDate());
+}
 
-const now=new Date();
-let bd=new Date(now.getFullYear(),1,9);
-if(now>bd) bd=new Date(now.getFullYear()+1,1,9);
-birthday.innerHTML=`🎈 Doğum gününe ${Math.ceil((bd-now)/86400000)} gün kaldı`;
+/* 💞 TANISMA GÜNÜ */
+const tanisma = dayOnly(new Date());
+tanisma.setDate(tanisma.getDate() - 8);
 
-// Toast
+const today = dayOnly(new Date());
+const daysTogether = Math.floor((today - tanisma) / 86400000);
+
+counter.innerHTML = `💞 Tanışalı ${daysTogether} gün oldu`;
+
+/* 🎂 DOĞUM GÜNÜ */
+const now = dayOnly(new Date());
+let bd = new Date(now.getFullYear(),1,9);
+if(now > bd) bd = new Date(now.getFullYear()+1,1,9);
+
+const daysToBirthday = Math.ceil((bd - now) / 86400000);
+birthday.innerHTML = `🎈 Doğum gününe ${daysToBirthday} gün kaldı`;
+
+/* 🔔 TOAST */
 const toast=document.getElementById("toast");
 const showToast=m=>{
     toast.innerHTML=m;
@@ -175,7 +188,7 @@ const showToast=m=>{
     setTimeout(()=>toast.classList.remove("show"),2400);
 };
 
-// 💬 ÇOK ÇEŞİTLİ SEVGİ MESAJLARI
+/* 💬 SEVGİ YAZILARI */
 const loveMessages=[
  "Seni seviyorum 💖","İyi ki varsın ✨","Aşkım 💕","Kalbim sensin 💓",
  "Canımın içi 💞","Ruhum sana ait 💘","Bir tanem 🌸","Her şeyim 💝",
@@ -184,12 +197,12 @@ const loveMessages=[
  "Kalbim sen diye atıyor 💘","Hep sen 💖","Benim mucizem ✨"
 ];
 
-// 🔊 BLUP SES MOTORU
-const blupBase=new Audio("blup.mp3");
-blupBase.volume=0.5;
-blupBase.preload="auto";
+/* 🔊 BLUP SES */
+const blupBase = new Audio("blup.mp3");
+blupBase.volume = 0.5;
+blupBase.preload = "auto";
 
-// ❤️ KALPLER
+/* ❤️ KALPLER */
 let hearts=0, MAX=20;
 
 setInterval(()=>{
@@ -202,7 +215,10 @@ setInterval(()=>{
     h.style.left=Math.random()*100+"vw";
     h.style.fontSize=(32+Math.random()*14)+"px";
 
-    h.addEventListener("click",e=>{
+    h.addEventListener("pointerdown",e=>{
+        e.preventDefault();
+        e.stopPropagation();
+
         h.classList.add("boom");
 
         const t=document.createElement("div");
@@ -213,15 +229,17 @@ setInterval(()=>{
         document.body.appendChild(t);
         setTimeout(()=>t.remove(),1200);
 
-        const blup=blupBase.cloneNode();
+        const blup = blupBase.cloneNode();
         blup.play().catch(()=>{});
+
+        setTimeout(()=>h.remove(),300);
     });
 
     document.body.appendChild(h);
     setTimeout(()=>{h.remove();hearts--;},6000);
 },250);
 
-// 🔐 ŞİFRE
+/* 🔐 ŞİFRE */
 let attempts=0;
 function check(){
     const v=password.value.toLowerCase().replace(/\s+/g,"");
