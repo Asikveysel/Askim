@@ -17,6 +17,7 @@ body{
     url("https://i.ibb.co/C5f42gTy/MG-20260112-WA0029.jpg") center/cover no-repeat;
 }
 
+/* Toast */
 .toast{
     position:fixed;top:-120px;left:50%;
     transform:translateX(-50%);
@@ -26,7 +27,12 @@ body{
 }
 .toast.show{top:18px}
 
-.container{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+/* Kart */
+.container{
+    position:fixed;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    z-index:10; /* HER ŞEYİN ÜSTÜNDE */
+}
 .card{
     width:360px;max-width:92vw;padding:18px;
     border-radius:20px;background:rgba(0,0,0,.35);
@@ -39,15 +45,15 @@ h1{text-shadow:0 0 18px black,0 0 30px pink}
     padding:10px;border-radius:20px;border:none;
 }
 .lock button{margin-top:8px;background:#ff4d6d;color:white}
-
 .secret{display:none;margin-top:12px}
 
-/* ❤️ KALPLER */
+/* ❤️ KALPLER (ARKADA) */
 .heart{
     position:fixed;bottom:-60px;
     font-size:30px;
     animation:float 6s linear forwards;
     cursor:pointer;
+    z-index:1;
 }
 @keyframes float{
     to{transform:translateY(-120vh);opacity:0}
@@ -61,10 +67,12 @@ h1{text-shadow:0 0 18px black,0 0 30px pink}
     to{transform:scale(2);opacity:0}
 }
 
+/* 💬 Yazı */
 .loveText{
     position:fixed;color:white;
     animation:textUp 1.2s forwards;
     pointer-events:none;
+    z-index:2;
 }
 @keyframes textUp{
     to{transform:translateY(-40px);opacity:0}
@@ -99,7 +107,7 @@ h1{text-shadow:0 0 18px black,0 0 30px pink}
 <script>
 document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 
-// Sayaç
+/* Sayaçlar */
 const start=new Date();start.setDate(start.getDate()-8);
 counter.innerHTML=`💞 Tanışalı ${Math.floor((Date.now()-start)/86400000)} gün oldu`;
 
@@ -108,31 +116,38 @@ let bd=new Date(now.getFullYear(),1,9);
 if(now>bd) bd=new Date(now.getFullYear()+1,1,9);
 birthday.innerHTML=`🎈 Doğum gününe ${Math.ceil((bd-now)/86400000)} gün kaldı`;
 
+/* Toast */
 const toast=document.getElementById("toast");
 const showToast=m=>{
- toast.textContent=m;toast.classList.add("show");
+ toast.textContent=m;
+ toast.classList.add("show");
  setTimeout(()=>toast.classList.remove("show"),2200);
 };
 
-// Sevgi yazıları
+/* Sevgi yazıları */
 const loveMessages=[
  "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓",
  "Ömrüm 💘","Ruh eşim 💫","Bitanem 💗",
  "Gülüşüne kurban 🌸","Sana aşığım 💘"
 ];
 
-// ❤️ Kalp sistemi
-let MAX=18,interval,broken=false,paused=false;
+/* ❤️ Kalp sistemi */
+let interval;
+let paused=false;
+let broken=false;
 
 function startHearts(){
+ clearInterval(interval);
  interval=setInterval(()=>{
   if(paused) return;
+
   const h=document.createElement("div");
   h.className="heart";
   h.innerHTML=broken?"💔":"💖";
   h.style.left=Math.random()*100+"vw";
 
   h.onclick=e=>{
+    if(broken) return;          // 💔 PATLAMAZ
     if(h.dataset.dead) return;
     h.dataset.dead=1;
     h.classList.add("boom");
@@ -153,29 +168,33 @@ function startHearts(){
 }
 startHearts();
 
-// 🔐 ŞİFRE DAVRANIŞLARI
+/* 🔐 Şifre */
 let attempts=0;
 function check(){
  const v=password.value.toLowerCase().replace(/\s+/g,"");
+
  if(v==="17nisan"){
   secret.style.display="block";
-  showToast("💖 BİLİYODUM!");
+  showToast("💖 Kalpler düzeldi!");
+  broken=false;
+  paused=false;
+  startHearts();
   return;
  }
+
  attempts++;
 
  if(attempts===1){
-  MAX=8;
-  showToast("😐 Kalpler kırıldı biraz…");
+  showToast("😐 Olsun meleklerde yanlış yapar…");
  }
  else if(attempts===2){
   paused=true;
-  showToast("😶 Kalpler durdu…");
+  showToast("😶 Doğum günümü bilmiyormusun?…");
  }
  else{
   broken=true;
   paused=false;
-  showToast("💔 Kırık kalpler…");
+  showToast("💔 Tamam öyle olsun.");
  }
 }
 </script>
