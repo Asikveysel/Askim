@@ -15,8 +15,6 @@ html,body{
     overscroll-behavior:none;
     font-family:Arial,sans-serif;
 }
-
-/* SABİT SAYFA */
 body{
     position:fixed;
     inset:0;
@@ -26,37 +24,30 @@ body{
       center/cover no-repeat;
 }
 
-/* MERKEZ */
-.container{
+/* ORTA KUTU */
+.center{
     position:fixed;
     inset:0;
     display:flex;
     align-items:center;
     justify-content:center;
-    z-index:10;
+    z-index:5;
 }
-
-.card{
+.box{
     width:360px;
     max-width:92vw;
-    padding:20px;
+    padding:18px;
     border-radius:20px;
-    background:rgba(0,0,0,.35);
-    backdrop-filter:blur(5px);
+    background:rgba(0,0,0,.4);
     color:white;
     text-align:center;
+    backdrop-filter:blur(5px);
 }
-
 h1{
-    font-size:clamp(26px,7vw,44px);
+    font-size:clamp(26px,7vw,42px);
     text-shadow:0 0 20px black,0 0 40px pink;
 }
-
-/* SAYAÇ */
-.counter{
-    margin:10px 0;
-    font-size:16px;
-}
+.info{margin-top:8px;font-size:15px}
 
 /* ŞİFRE */
 .lock input,.lock button{
@@ -73,10 +64,7 @@ h1{
 }
 
 /* GİZLİ */
-.secret{
-    display:none;
-    margin-top:12px;
-}
+.secret{display:none;margin-top:10px}
 
 /* ❤️ KALPLER */
 .heart{
@@ -85,11 +73,8 @@ h1{
     font-size:56px;
     animation:float 6s linear forwards;
     cursor:pointer;
-    user-select:none;
-    pointer-events:auto;
     z-index:2;
 }
-
 @keyframes float{
     from{transform:translateY(0);opacity:1}
     to{transform:translateY(-120vh);opacity:0}
@@ -104,18 +89,17 @@ h1{
 }
 
 /* YAZI */
-.loveText{
+.text{
     position:fixed;
     font-size:22px;
     font-weight:bold;
     color:white;
     text-shadow:0 0 12px pink,0 0 24px hotpink;
-    animation:love 1.4s ease-out forwards;
+    animation:fly 1.4s ease-out forwards;
     pointer-events:none;
-    z-index:5;
+    z-index:6;
 }
-
-@keyframes love{
+@keyframes fly{
     from{opacity:0;transform:translateY(0)}
     30%{opacity:1}
     to{opacity:0;transform:translateY(-60px)}
@@ -125,21 +109,21 @@ h1{
 
 <body>
 
-<div class="container">
-<div class="card">
+<div class="center">
+<div class="box">
     <h1>💖 GÜZEL KARIM BENİM<br>SENİ ÇOK SEVİYORUM 💖</h1>
 
-    <div class="counter" id="daysTogether"></div>
-    <div class="counter" id="birthdayCountdown"></div>
+    <div class="info" id="together"></div>
+    <div class="info" id="birthday"></div>
 
     <div class="lock">
         🔒 İpucu: <b>Doğum günüm</b><br>
-        <input id="password" placeholder="Şifreyi yaz">
+        <input id="pass" placeholder="Şifre">
         <button onclick="check()">Giriş</button>
     </div>
 
     <div class="secret" id="secret">
-        💌 Bu sesi sadece sana kaydettim 💖<br><br>
+        💌 Bu sesi sadece sana kaydettim<br><br>
         <audio controls src="sesim.mp3" style="width:100%"></audio>
     </div>
 </div>
@@ -147,20 +131,40 @@ h1{
 
 <script>
 /* SAYFA KAYMASIN */
-document.body.addEventListener("touchmove", e => {
+document.addEventListener("touchmove",e=>{
     if(!e.target.classList.contains("heart")) e.preventDefault();
 },{passive:false});
 
-/* ❤️ MESAJLAR */
-const loveMessages=[
- "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Canımın içi 💞",
- "Her şeyim 💝","Bir tanem 🌸","Ruhum sana ait 💘",
- "İyi ki varsın ✨","Bir ömür sen 💍","Aşığım sana 💕",
- "Tek gerçeğim sensin 💖","Mutluluğum sensin 💗"
-];
+/* SAYAÇLAR */
+const meet=new Date();
+meet.setDate(meet.getDate()-8);
+document.getElementById("together").innerText=
+`💞 Tanışalı ${Math.floor((Date.now()-meet)/86400000)} gün oldu`;
+
+const now=new Date();
+let bday=new Date(now.getFullYear(),1,9);
+if(now>bday) bday=new Date(now.getFullYear()+1,1,9);
+document.getElementById("birthday").innerText=
+`🎂 Doğum gününe ${Math.ceil((bday-now)/86400000)} gün kaldı`;
+
+/* ŞİFRE */
+function check(){
+    if(pass.value.trim().toLowerCase()==="17 nisan"){
+        secret.style.display="block";
+        alert("💖 BİLİYODUMM!");
+    }else{
+        alert("😌 Tekrar dene");
+    }
+}
 
 /* ❤️ KALPLER */
-let active=0, MAX=20;
+const msgs=[
+ "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Canımın içi 💞",
+ "Her şeyim 💝","Bir tanem 🌸","Ruhum sana ait 💘",
+ "İyi ki varsın ✨","Bir ömür sen 💍"
+];
+
+let active=0,MAX=18;
 setInterval(()=>{
     if(active>=MAX) return;
     active++;
@@ -175,8 +179,8 @@ setInterval(()=>{
         h.classList.add("boom");
 
         const t=document.createElement("div");
-        t.className="loveText";
-        t.textContent=loveMessages[Math.floor(Math.random()*loveMessages.length)];
+        t.className="text";
+        t.textContent=msgs[Math.random()*msgs.length|0];
         t.style.left=e.clientX+"px";
         t.style.top=e.clientY+"px";
         document.body.appendChild(t);
@@ -189,31 +193,6 @@ setInterval(()=>{
     document.body.appendChild(h);
     setTimeout(()=>{h.remove();active--;},6000);
 },220);
-
-/* 🔢 SAYAÇLAR */
-const meetDate=new Date();
-meetDate.setDate(meetDate.getDate()-8);
-
-document.getElementById("daysTogether").innerText =
-`💞 Tanışalı ${Math.floor((Date.now()-meetDate)/86400000)} gün oldu`;
-
-const now=new Date();
-let birthday=new Date(now.getFullYear(),1,9);
-if(now>birthday) birthday=new Date(now.getFullYear()+1,1,9);
-
-document.getElementById("birthdayCountdown").innerText =
-`🎂 Doğum gününe ${Math.ceil((birthday-now)/86400000)} gün kaldı`;
-
-/* 🔐 ŞİFRE */
-function check(){
-    const v=password.value.trim().toLowerCase();
-    if(v==="17 nisan"){
-        secret.style.display="block";
-        alert("💖 BİLİYODUMM!");
-    }else{
-        alert("😌 Tekrar dene aşkım");
-    }
-}
 </script>
 
 </body>
