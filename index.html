@@ -6,6 +6,8 @@
 <title>Aşkım 💖</title>
 
 <style>
+*{box-sizing:border-box}
+
 body{
     margin:0;
     height:100vh;
@@ -34,60 +36,57 @@ body{
     box-shadow:0 10px 25px rgba(0,0,0,0.4);
     text-shadow:0 0 6px rgba(0,0,0,0.4);
     z-index:999;
-    transition:top 0.6s ease;
+    transition:top .6s ease;
 }
 .toast.show{ top:20px; }
 
 .container{
     background:rgba(0,0,0,0.35);
-    padding:20px;
+    padding:18px;
     border-radius:20px;
     backdrop-filter:blur(4px);
-    max-width:90vw;
+    max-width:92vw;
+    width:380px;
     color:white;
     z-index:10;
 }
 
 h1{
-    font-size:clamp(26px,6vw,48px);
+    font-size:clamp(24px,6vw,42px);
     text-shadow:0 0 20px black,0 0 40px pink;
-    margin-bottom:10px;
 }
 
 .counter,.birthday{
-    font-size:clamp(15px,4vw,20px);
-    margin-bottom:10px;
-    text-shadow:0 0 10px black;
+    font-size:clamp(14px,4vw,18px);
+    margin:6px 0;
 }
 
-/* 🔐 Şifre alanı */
-.lock{
-    margin-top:15px;
-}
+/* 🔐 Şifre */
 .lock input{
     padding:10px;
+    width:100%;
+    max-width:220px;
     border-radius:20px;
     border:none;
     text-align:center;
-    width:170px;
 }
 .lock button{
     margin-top:8px;
-    padding:8px 18px;
+    padding:10px 20px;
     border:none;
     border-radius:20px;
     background:#ff4d6d;
     color:white;
-    cursor:pointer;
+    width:100%;
+    max-width:220px;
 }
 
 /* 🔓 Gizli alan */
 .secret{
     display:none;
-    margin-top:15px;
+    margin-top:14px;
     animation:fadeIn 1s ease forwards;
 }
-
 @keyframes fadeIn{
     from{opacity:0;transform:translateY(10px);}
     to{opacity:1;transform:translateY(0);}
@@ -96,12 +95,26 @@ h1{
 /* ❤️ Kalpler */
 .heart{
     position:absolute;
-    font-size:30px;
-    animation:float 8s linear infinite;
+    font-size:22px;
+    animation:float 6s linear infinite;
+    cursor:pointer;
 }
 @keyframes float{
     from{transform:translateY(100vh);opacity:1;}
     to{transform:translateY(-10vh);opacity:0;}
+}
+
+/* 💥 Patlama */
+.boom{
+    animation:boom .4s ease forwards;
+}
+@keyframes boom{
+    to{transform:scale(2);opacity:0;}
+}
+
+/* 📱 Mobil */
+@media(max-width:600px){
+    .heart{font-size:18px;}
 }
 </style>
 </head>
@@ -118,25 +131,22 @@ h1{
 
     <div class="lock">
         🔒 İpucu: <b>Doğum günüm</b><br>
-        <input type="text" id="password" placeholder="Şifreyi yaz">
-        <br>
+        <input id="password" placeholder="Şifreyi yaz">
         <button onclick="check()">Giriş</button>
     </div>
 
     <div class="secret" id="secret">
-        💌 <b>Bu sesi sadece sana kaydettim…</b><br><br>
-        Seni çok seviyorum, iyi ki varsın 💖<br><br>
+        💌 Bu sesi sadece sana kaydettim 💖<br><br>
         <audio controls src="sesim.mp3" style="width:100%"></audio>
     </div>
 </div>
 
 <script>
-// 💞 Tanışma (8 gün)
-const start=new Date();
-start.setDate(start.getDate()-8);
+// 💞 Tanışma
+const start=new Date(); start.setDate(start.getDate()-8);
 counter.innerHTML=`💞 Tanışalı <b>${Math.floor((new Date()-start)/86400000)}</b> gün oldu`;
 
-// 🎂 9 Şubat – SADECE SAYAÇ
+// 🎂 Sayaç
 const now=new Date();
 let bd=new Date(now.getFullYear(),1,9);
 if(now>bd) bd=new Date(now.getFullYear()+1,1,9);
@@ -150,63 +160,67 @@ function showToast(msg){
     setTimeout(()=>toast.classList.remove("show"),2600);
 }
 
-// ❤️ Kalpler
-let heartInterval=300;
+// ❤️ Kalpler (HIZLI + FAZLA)
+let heartInterval=90;
 let heartType="💖";
 let heartTimer=startHearts();
 
 function startHearts(){
     return setInterval(createHeart,heartInterval);
 }
-function stopHearts(){
-    clearInterval(heartTimer);
-}
+function stopHearts(){ clearInterval(heartTimer); }
+
 function createHeart(){
     const h=document.createElement("div");
     h.className="heart";
     h.innerHTML=heartType;
     h.style.left=Math.random()*100+"vw";
-    h.style.fontSize=(20+Math.random()*40)+"px";
+    h.onclick=()=>{ h.classList.add("boom"); };
     document.body.appendChild(h);
-    setTimeout(()=>h.remove(),8000);
+    setTimeout(()=>h.remove(),6000);
+}
+
+// İlk açılışta patlama gibi
+for(let i=0;i<20;i++){
+    setTimeout(createHeart,i*60);
 }
 
 // 🔐 Şifre sistemi
 let attempts=0;
 function check(){
-    const input=document.getElementById("password").value
-        .toLowerCase()
-        .replace(/\s+/g,"");
+    const input=password.value.toLowerCase().replace(/\s+/g,"");
 
     if(input==="17nisan"){
         attempts=0;
-        document.getElementById("secret").style.display="block";
-        showToast("💖✨ <b>BİLİYODUMM!</b> ✨💖");
+        secret.style.display="block";
+        showToast("💖✨ BİLİYODUMM! ✨💖");
 
+        // Doğru → kalpler coşsun
         stopHearts();
-        heartInterval=300;
+        heartInterval=60;
         heartType="💖";
         heartTimer=startHearts();
+
+        // Mobil titreşim
+        if(navigator.vibrate) navigator.vibrate([100,50,100]);
         return;
     }
 
     attempts++;
 
     if(attempts===1){
-        showToast("😇✨ Olsun… <i>melekler de yanılabilir</i> ✨😇");
-        stopHearts();
-        heartInterval=900;
-        heartTimer=startHearts();
+        showToast("😇 Olsun… melekler de yanılabilir");
+        stopHearts(); heartInterval=180; heartTimer=startHearts();
     }
     else if(attempts===2){
-        showToast("🥺💔 <b>Hadi ama… doğum günümü bilmiyor musun?</b>");
+        showToast("🥺 Hadi ama… doğum günümü bilmiyor musun?");
         stopHearts();
     }
     else{
-        showToast("😌💔 <b>Bravo…</b>");
+        showToast("😌 Bravo…");
         stopHearts();
-        heartInterval=600;
         heartType="💔";
+        heartInterval=120;
         heartTimer=startHearts();
     }
 }
