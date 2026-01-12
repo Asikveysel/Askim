@@ -2,9 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Aşkım 💖</title>
 
 <style>
@@ -15,15 +13,15 @@ html,body{
     height:100%;
     overflow:hidden;
     overscroll-behavior:none;
-    touch-action:none;
-    position:fixed;
-    inset:0;
     font-family:Arial,sans-serif;
 }
 
+/* SABİT SAYFA */
 body{
+    position:fixed;
+    inset:0;
     background:
-      linear-gradient(rgba(255,0,80,0.45), rgba(255,0,80,0.45)),
+      linear-gradient(rgba(255,0,80,.45), rgba(255,0,80,.45)),
       url("https://i.ibb.co/C5f42gTy/MG-20260112-WA0029.jpg")
       center/cover no-repeat;
 }
@@ -41,32 +39,55 @@ body{
 .card{
     width:360px;
     max-width:92vw;
-    padding:18px;
+    padding:20px;
     border-radius:20px;
     background:rgba(0,0,0,.35);
-    backdrop-filter:blur(4px);
+    backdrop-filter:blur(5px);
     color:white;
     text-align:center;
 }
 
 h1{
-    font-size:clamp(28px,7vw,46px);
+    font-size:clamp(26px,7vw,44px);
     text-shadow:0 0 20px black,0 0 40px pink;
+}
+
+/* SAYAÇ */
+.counter{
+    margin:10px 0;
+    font-size:16px;
+}
+
+/* ŞİFRE */
+.lock input,.lock button{
+    width:100%;
+    max-width:220px;
+    padding:10px;
+    border-radius:20px;
+    border:none;
+    margin-top:6px;
+}
+.lock button{
+    background:#ff4d6d;
+    color:white;
+}
+
+/* GİZLİ */
+.secret{
+    display:none;
+    margin-top:12px;
 }
 
 /* ❤️ KALPLER */
 .heart{
     position:fixed;
     bottom:-80px;
-    font-size:52px;
-    animation:float 6s linear infinite;
-    z-index:1;
+    font-size:56px;
+    animation:float 6s linear forwards;
     cursor:pointer;
-}
-.heart::after{
-    content:"";
-    position:absolute;
-    inset:-25px;
+    user-select:none;
+    pointer-events:auto;
+    z-index:2;
 }
 
 @keyframes float{
@@ -76,27 +97,28 @@ h1{
 
 /* PATLAMA */
 .boom{
-    animation:softBoom .45s ease-out forwards;
+    animation:boom .35s ease-out forwards;
 }
-@keyframes softBoom{
-    to{transform:scale(1.9);opacity:0}
+@keyframes boom{
+    to{transform:scale(2);opacity:0}
 }
 
-/* 💬 YAZILAR */
+/* YAZI */
 .loveText{
     position:fixed;
-    font-size:20px;
+    font-size:22px;
     font-weight:bold;
     color:white;
-    text-shadow:0 0 12px pink,0 0 20px hotpink;
-    animation:loveFloat 1.3s ease-out forwards;
+    text-shadow:0 0 12px pink,0 0 24px hotpink;
+    animation:love 1.4s ease-out forwards;
     pointer-events:none;
     z-index:5;
 }
-@keyframes loveFloat{
+
+@keyframes love{
     from{opacity:0;transform:translateY(0)}
     30%{opacity:1}
-    to{opacity:0;transform:translateY(-50px)}
+    to{opacity:0;transform:translateY(-60px)}
 }
 </style>
 </head>
@@ -106,52 +128,92 @@ h1{
 <div class="container">
 <div class="card">
     <h1>💖 GÜZEL KARIM BENİM<br>SENİ ÇOK SEVİYORUM 💖</h1>
+
+    <div class="counter" id="daysTogether"></div>
+    <div class="counter" id="birthdayCountdown"></div>
+
+    <div class="lock">
+        🔒 İpucu: <b>Doğum günüm</b><br>
+        <input id="password" placeholder="Şifreyi yaz">
+        <button onclick="check()">Giriş</button>
+    </div>
+
+    <div class="secret" id="secret">
+        💌 Bu sesi sadece sana kaydettim 💖<br><br>
+        <audio controls src="sesim.mp3" style="width:100%"></audio>
+    </div>
 </div>
 </div>
 
 <script>
-document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
+/* SAYFA KAYMASIN */
+document.body.addEventListener("touchmove", e => {
+    if(!e.target.classList.contains("heart")) e.preventDefault();
+},{passive:false});
 
-/* 💬 ÇOK DAHA FAZLA SEVGİ YAZISI */
+/* ❤️ MESAJLAR */
 const loveMessages=[
  "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Canımın içi 💞",
- "Her şeyim 💝","Nefesimsin 🌙","Bir tanem 🌸","Ruhum sana ait 💘",
- "Mutluluğum sensin ✨","İyi ki varsın 💗","Hep sen 💖",
- "Benim mucizem 💫","Kalbim sana ait 💓","Bir ömür sen 💍",
- "Aşığım sana 💕","Kalbimin sahibi 💖","Sonsuz aşkım ✨",
- "Gülüşün dünyam 🌷","İyi ki benimlesin 💞","Tek gerçeğim sensin 💘"
+ "Her şeyim 💝","Bir tanem 🌸","Ruhum sana ait 💘",
+ "İyi ki varsın ✨","Bir ömür sen 💍","Aşığım sana 💕",
+ "Tek gerçeğim sensin 💖","Mutluluğum sensin 💗"
 ];
 
 /* ❤️ KALPLER */
-let hearts=0, MAX=20;
-
+let active=0, MAX=20;
 setInterval(()=>{
-    if(hearts>=MAX) return;
-    hearts++;
+    if(active>=MAX) return;
+    active++;
 
     const h=document.createElement("div");
     h.className="heart";
-    h.innerHTML="💖";
+    h.textContent="💖";
     h.style.left=Math.random()*100+"vw";
-    h.style.fontSize=(48+Math.random()*20)+"px";
+    h.style.fontSize=(50+Math.random()*24)+"px";
 
-    h.addEventListener("click",e=>{
+    h.addEventListener("pointerdown",e=>{
         h.classList.add("boom");
 
         const t=document.createElement("div");
         t.className="loveText";
-        t.innerHTML=loveMessages[Math.floor(Math.random()*loveMessages.length)];
+        t.textContent=loveMessages[Math.floor(Math.random()*loveMessages.length)];
         t.style.left=e.clientX+"px";
         t.style.top=e.clientY+"px";
         document.body.appendChild(t);
 
-        setTimeout(()=>t.remove(),1300);
+        setTimeout(()=>t.remove(),1400);
         setTimeout(()=>h.remove(),300);
+        active--;
     });
 
     document.body.appendChild(h);
-    setTimeout(()=>{h.remove();hearts--;},6000);
-},240);
+    setTimeout(()=>{h.remove();active--;},6000);
+},220);
+
+/* 🔢 SAYAÇLAR */
+const meetDate=new Date();
+meetDate.setDate(meetDate.getDate()-8);
+
+document.getElementById("daysTogether").innerText =
+`💞 Tanışalı ${Math.floor((Date.now()-meetDate)/86400000)} gün oldu`;
+
+const now=new Date();
+let birthday=new Date(now.getFullYear(),1,9);
+if(now>birthday) birthday=new Date(now.getFullYear()+1,1,9);
+
+document.getElementById("birthdayCountdown").innerText =
+`🎂 Doğum gününe ${Math.ceil((birthday-now)/86400000)} gün kaldı`;
+
+/* 🔐 ŞİFRE */
+function check(){
+    const v=password.value.trim().toLowerCase();
+    if(v==="17 nisan"){
+        secret.style.display="block";
+        alert("💖 BİLİYODUMM!");
+    }else{
+        alert("😌 Tekrar dene aşkım");
+    }
+}
 </script>
 
 </body>
