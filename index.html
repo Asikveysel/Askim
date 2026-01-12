@@ -7,210 +7,149 @@
 
 <style>
 html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  position:fixed;
-  inset:0;
-  touch-action:none;
-  overscroll-behavior:none;
-  font-family:Arial,sans-serif;
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    position:fixed;
+    inset:0;
+    touch-action:none;
+    overscroll-behavior:none;
+    font-family:Arial,sans-serif;
 }
 
 body{
-  background:
-    linear-gradient(rgba(255,0,80,.45), rgba(255,0,80,.45)),
-    url("https://i.ibb.co/C5f42gTy/MG-20260112-WA0029.jpg")
-    center/cover no-repeat;
+    background:
+      linear-gradient(rgba(255,0,80,0.45), rgba(255,0,80,0.45)),
+      url("https://i.ibb.co/C5f42gTy/MG-20260112-WA0029.jpg")
+      center/cover no-repeat;
 }
 
-.container{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:10;
-}
-
-.card{
-  width:360px;
-  max-width:92vw;
-  padding:18px;
-  border-radius:22px;
-  background:rgba(0,0,0,.35);
-  backdrop-filter:blur(4px);
-  color:white;
-  text-align:center;
+/* MERKEZ YAZI */
+.center{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    z-index:10;
 }
 
 h1{
-  font-size:clamp(24px,6vw,40px);
-  text-shadow:0 0 18px black,0 0 30px pink;
+    color:white;
+    font-size:clamp(28px,6vw,48px);
+    text-shadow:0 0 20px black,0 0 40px pink;
 }
-
-.lock input,.lock button{
-  width:100%;
-  max-width:220px;
-  padding:10px;
-  border-radius:20px;
-  border:none;
-}
-
-.lock button{
-  margin-top:8px;
-  background:#ff4d6d;
-  color:white;
-}
-
-.secret{display:none;margin-top:12px}
 
 /* ❤️ KALPLER */
 .heart{
-  position:fixed;
-  bottom:-60px;
-  font-size:38px;
-  animation:float 6s linear infinite;
-  z-index:1;
+    position:fixed;
+    bottom:-80px;
+    font-size:48px;
+    animation:float 6s linear infinite;
+    z-index:1;
+    cursor:pointer;
 }
 
+/* Dokunma alanı büyüt */
 .heart::after{
-  content:"";
-  position:absolute;
-  inset:-20px;
+    content:"";
+    position:absolute;
+    inset:-25px;
 }
 
+/* Yukarı çıkma */
 @keyframes float{
-  from{transform:translateY(0);opacity:1}
-  to{transform:translateY(-120vh);opacity:0}
+    from{transform:translateY(0);opacity:1}
+    to{transform:translateY(-120vh);opacity:0}
 }
 
+/* Patlama */
 .boom{
-  animation:softBoom .4s ease-out forwards;
+    animation:pop .4s ease-out forwards;
+}
+@keyframes pop{
+    to{transform:scale(1.8);opacity:0}
 }
 
-@keyframes softBoom{
-  to{transform:scale(1.6);opacity:0}
-}
-
+/* Sevgi yazısı */
 .loveText{
-  position:fixed;
-  font-size:15px;
-  color:white;
-  text-shadow:0 0 8px pink;
-  animation:loveFloat 1.2s ease-out forwards;
-  pointer-events:none;
-  z-index:5;
+    position:fixed;
+    font-size:16px;
+    color:white;
+    text-shadow:0 0 10px pink;
+    animation:loveUp 1.2s ease-out forwards;
+    pointer-events:none;
+    z-index:5;
 }
 
-@keyframes loveFloat{
-  from{opacity:0}
-  30%{opacity:1}
-  to{opacity:0;transform:translateY(-40px)}
+@keyframes loveUp{
+    from{opacity:0}
+    30%{opacity:1}
+    to{opacity:0;transform:translateY(-40px)}
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-<div class="card">
-  <h1>💖 GÜZEL KARIM BENİM<br>SENİ ÇOK SEVİYORUM 💖</h1>
-  <div id="counter"></div>
-  <div id="birthday"></div>
-
-  <div class="lock">
-    🔒 İpucu: <b>Doğum günüm</b><br>
-    <input id="password" placeholder="Şifreyi yaz">
-    <button id="loginBtn">Giriş</button>
-  </div>
-
-  <div class="secret" id="secret">
-    💌 Bu sesi sadece sana kaydettim 💖<br><br>
-    <audio controls src="sesim.mp3" style="width:100%"></audio>
-  </div>
-</div>
+<div class="center">
+    <h1>💖 GÜZEL KARIM BENİM<br>SENİ ÇOK SEVİYORUM 💖</h1>
 </div>
 
 <script>
-// 🔒 Scroll kilidi
+// Sayfayı kesin kilitle
 document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 
-/* DOM */
-const counter = document.getElementById("counter");
-const birthday = document.getElementById("birthday");
-const password = document.getElementById("password");
-const secret = document.getElementById("secret");
-const loginBtn = document.getElementById("loginBtn");
-
-/* 📅 SAAT SIFIRLAYICI */
-const day = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-
-/* 💞 TANISMA (8 GÜN ÖNCE) */
-const today = day(new Date());
-const meet = new Date(today);
-meet.setDate(meet.getDate() - 8);
-
-counter.innerHTML = `💞 Tanışalı ${Math.floor((today - meet)/86400000)} gün oldu`;
-
-/* 🎂 DOĞUM GÜNÜ */
-let bd = new Date(today.getFullYear(),1,9);
-if(today > bd) bd = new Date(today.getFullYear()+1,1,9);
-birthday.innerHTML = `🎈 Doğum gününe ${Math.ceil((bd - today)/86400000)} gün kaldı`;
-
-/* 💬 MESAJLAR */
+// 💬 ÇOK FAZLA SEVGİ MESAJI
 const loveMessages=[
  "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Canımın içi 💞",
  "Her şeyim 💝","Nefesimsin 🌙","Bir tanem 🌸","Ruhum sana ait 💘",
- "Mutluluğum sensin ✨","İyi ki varsın 💗"
+ "Mutluluğum sensin ✨","İyi ki varsın 💗","Hep sen 💖","Benim mucizem 💫",
+ "Kalbim sana ait 💓","Bir ömür sen 💍","İyi ki benimlesin 💞",
+ "Aşığım sana 💕","Kalbimin sahibi 💖","Sonsuz aşkım ✨"
 ];
 
-/* 🔊 SES */
-const blupBase = new Audio("blup.mp3");
-blupBase.volume = 0.5;
-
-/* ❤️ KALPLER */
-let hearts=0, MAX=18;
+// ❤️ KALPLER
+let hearts=0;
+const MAX=20;
 
 setInterval(()=>{
-  if(hearts>=MAX) return;
-  hearts++;
+    if(hearts>=MAX) return;
+    hearts++;
 
-  const h=document.createElement("div");
-  h.className="heart";
-  h.innerHTML="💖";
-  h.style.left=Math.random()*100+"vw";
-  h.style.fontSize=(32+Math.random()*16)+"px";
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="💖";
+    h.style.left=Math.random()*100+"vw";
+    h.style.fontSize=(42+Math.random()*18)+"px";
 
-  h.addEventListener("pointerdown",e=>{
-    e.preventDefault();
-    h.classList.add("boom");
+    h.addEventListener("pointerdown",e=>{
+        e.preventDefault();
+        e.stopPropagation();
 
-    const t=document.createElement("div");
-    t.className="loveText";
-    t.innerHTML=loveMessages[Math.random()*loveMessages.length|0];
-    t.style.left=e.clientX+"px";
-    t.style.top=e.clientY+"px";
-    document.body.appendChild(t);
+        h.classList.add("boom");
 
-    blupBase.cloneNode().play().catch(()=>{});
+        const t=document.createElement("div");
+        t.className="loveText";
+        t.innerHTML=loveMessages[Math.floor(Math.random()*loveMessages.length)];
+        t.style.left=e.clientX+"px";
+        t.style.top=e.clientY+"px";
+        document.body.appendChild(t);
 
-    setTimeout(()=>t.remove(),1200);
-    setTimeout(()=>h.remove(),300);
-  });
+        setTimeout(()=>t.remove(),1200);
+        setTimeout(()=>h.remove(),300);
+    });
 
-  document.body.appendChild(h);
-  setTimeout(()=>{h.remove();hearts--;},6000);
-},250);
+    document.body.appendChild(h);
+    setTimeout(()=>{
+        h.remove();
+        hearts--;
+    },6000);
 
-/* 🔐 ŞİFRE */
-loginBtn.onclick=()=>{
-  if(password.value.toLowerCase().replace(/\s+/g,"")==="17nisan"){
-    secret.style.display="block";
-  }
-};
+},220);
 </script>
 
 </body>
