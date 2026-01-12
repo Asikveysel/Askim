@@ -6,201 +6,210 @@
 <title>Aşkım 💖</title>
 
 <style>
-body {
+body{
     margin:0;
-    overflow:hidden;
     height:100vh;
+    overflow:hidden;
     background:
       linear-gradient(rgba(255,0,80,0.45), rgba(255,0,80,0.45)),
       url("https://i.ibb.co/C5f42gTy/MG-20260112-WA0029.jpg") center/cover no-repeat;
     display:flex;
     justify-content:center;
     align-items:center;
-    font-family: Arial, sans-serif;
+    font-family:Arial,sans-serif;
     text-align:center;
 }
 
-.container {
-    z-index:10;
-    padding:20px;
-    background: rgba(0,0,0,0.35);
-    border-radius:20px;
-    backdrop-filter: blur(4px);
-    max-width: 90vw;
-}
-
-h1 {
+/* 🔔 Üst mesaj */
+.toast{
+    position:fixed;
+    top:-120px;
+    left:50%;
+    transform:translateX(-50%);
+    background:linear-gradient(135deg,#ff4d6d,#ff8fa3);
     color:white;
-    font-size:clamp(28px, 6vw, 55px);
-    text-shadow:0 0 20px black, 0 0 40px pink;
-    animation:pulse 1s infinite alternate;
-    margin-bottom:15px;
+    padding:14px 26px;
+    border-radius:30px;
+    font-size:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.4);
+    text-shadow:0 0 6px rgba(0,0,0,0.4);
+    z-index:999;
+    transition:top 0.6s ease;
+}
+.toast.show{ top:20px; }
+
+.container{
+    background:rgba(0,0,0,0.35);
+    padding:20px;
+    border-radius:20px;
+    backdrop-filter:blur(4px);
+    max-width:90vw;
+    color:white;
+    z-index:10;
 }
 
-.counter {
-    color:#fff;
-    font-size:clamp(16px, 4vw, 22px);
+h1{
+    font-size:clamp(26px,6vw,48px);
+    text-shadow:0 0 20px black,0 0 40px pink;
+    margin-bottom:10px;
+}
+
+.counter,.birthday{
+    font-size:clamp(15px,4vw,20px);
+    margin-bottom:10px;
     text-shadow:0 0 10px black;
-    margin-bottom:15px;
 }
 
-@keyframes pulse {
-    from {transform:scale(1);}
-    to {transform:scale(1.05);}
+/* 🔐 Şifre alanı */
+.lock{
+    margin-top:15px;
+}
+.lock input{
+    padding:10px;
+    border-radius:20px;
+    border:none;
+    text-align:center;
+    width:170px;
+}
+.lock button{
+    margin-top:8px;
+    padding:8px 18px;
+    border:none;
+    border-radius:20px;
+    background:#ff4d6d;
+    color:white;
+    cursor:pointer;
+}
+
+/* 🔓 Gizli alan */
+.secret{
+    display:none;
+    margin-top:15px;
+    animation:fadeIn 1s ease forwards;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(10px);}
+    to{opacity:1;transform:translateY(0);}
 }
 
 /* ❤️ Kalpler */
-.heart {
+.heart{
     position:absolute;
     font-size:30px;
     animation:float 8s linear infinite;
 }
-
-@keyframes float {
-    0% {transform:translateY(100vh); opacity:1;}
-    100% {transform:translateY(-10vh); opacity:0;}
-}
-
-/* 🎧 WhatsApp Tarzı Ses Oynatıcı */
-.audio-player {
-    width: min(320px, 90vw);
-    background: #1f2c34;
-    border-radius: 18px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.4);
-}
-
-.audio-player button {
-    background: #25d366;
-    border: none;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.audio-info {
-    flex: 1;
-}
-
-.progress-container {
-    width: 100%;
-    height: 6px;
-    background: #555;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress {
-    height: 100%;
-    width: 0%;
-    background: #25d366;
-}
-
-.time {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: #ccc;
-    margin-top: 4px;
+@keyframes float{
+    from{transform:translateY(100vh);opacity:1;}
+    to{transform:translateY(-10vh);opacity:0;}
 }
 </style>
 </head>
 
 <body>
 
+<div id="toast" class="toast"></div>
+
 <div class="container">
-    <h1>
-        💖 GÜZEL KARIM BENİM <br>
-        SENİ ÇOK SEVİYORUMMMMMMM 💖
-    </h1>
+    <h1>💖 GÜZEL KARIM BENİM<br>SENİ ÇOK SEVİYORUM 💖</h1>
 
     <div class="counter" id="counter"></div>
+    <div class="birthday" id="birthday"></div>
 
-    <!-- 🎧 Ses Oynatıcı -->
-    <div class="audio-player">
-        <button id="playPause">▶️</button>
-        <div class="audio-info">
-            <div class="progress-container">
-                <div class="progress" id="progress"></div>
-            </div>
-            <div class="time">
-                <span id="current">0:00</span>
-                <span id="duration">0:00</span>
-            </div>
-        </div>
+    <div class="lock">
+        🔒 İpucu: <b>Doğum günüm</b><br>
+        <input type="text" id="password" placeholder="Şifreyi yaz">
+        <br>
+        <button onclick="check()">Giriş</button>
+    </div>
+
+    <div class="secret" id="secret">
+        💌 <b>Bu sesi sadece sana kaydettim…</b><br><br>
+        Seni çok seviyorum, iyi ki varsın 💖<br><br>
+        <audio controls src="sesim.mp3" style="width:100%"></audio>
     </div>
 </div>
 
-<audio id="audio" src="sesim.mp3"></audio>
-
 <script>
-// 💞 Tanışma Sayacı (8 gün)
-const startDate = new Date();
-startDate.setDate(startDate.getDate() - 8);
+// 💞 Tanışma (8 gün)
+const start=new Date();
+start.setDate(start.getDate()-8);
+counter.innerHTML=`💞 Tanışalı <b>${Math.floor((new Date()-start)/86400000)}</b> gün oldu`;
 
-function updateCounter() {
-    const now = new Date();
-    const diff = now - startDate;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    document.getElementById("counter").innerHTML =
-        `💞 Tanışalı <b>${days}</b> gün oldu`;
-}
-updateCounter();
-setInterval(updateCounter, 60000);
+// 🎂 9 Şubat – SADECE SAYAÇ
+const now=new Date();
+let bd=new Date(now.getFullYear(),1,9);
+if(now>bd) bd=new Date(now.getFullYear()+1,1,9);
+birthday.innerHTML=`🎈 Doğum gününe <b>${Math.ceil((bd-now)/86400000)}</b> gün kaldı`;
 
-// 💖 Kalpler
-setInterval(() => {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.innerHTML = "💖";
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.fontSize = (20 + Math.random() * 40) + "px";
-    document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 8000);
-}, 300);
-
-// 🎧 Ses Kontrolleri
-const audio = document.getElementById("audio");
-const playPause = document.getElementById("playPause");
-const progress = document.getElementById("progress");
-const current = document.getElementById("current");
-const duration = document.getElementById("duration");
-
-function formatTime(sec) {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return `${m}:${s < 10 ? "0" : ""}${s}`;
+// 🔔 Toast
+const toast=document.getElementById("toast");
+function showToast(msg){
+    toast.innerHTML=msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"),2600);
 }
 
-audio.addEventListener("loadedmetadata", () => {
-    duration.textContent = formatTime(audio.duration);
-});
+// ❤️ Kalpler
+let heartInterval=300;
+let heartType="💖";
+let heartTimer=startHearts();
 
-audio.addEventListener("timeupdate", () => {
-    current.textContent = formatTime(audio.currentTime);
-    progress.style.width =
-        (audio.currentTime / audio.duration) * 100 + "%";
-});
+function startHearts(){
+    return setInterval(createHeart,heartInterval);
+}
+function stopHearts(){
+    clearInterval(heartTimer);
+}
+function createHeart(){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML=heartType;
+    h.style.left=Math.random()*100+"vw";
+    h.style.fontSize=(20+Math.random()*40)+"px";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),8000);
+}
 
-playPause.addEventListener("click", () => {
-    if (audio.paused) {
-        audio.play();
-        playPause.textContent = "⏸️";
-    } else {
-        audio.pause();
-        playPause.textContent = "▶️";
+// 🔐 Şifre sistemi
+let attempts=0;
+function check(){
+    const input=document.getElementById("password").value
+        .toLowerCase()
+        .replace(/\s+/g,"");
+
+    if(input==="17nisan"){
+        attempts=0;
+        document.getElementById("secret").style.display="block";
+        showToast("💖✨ <b>BİLİYODUMM!</b> ✨💖");
+
+        stopHearts();
+        heartInterval=300;
+        heartType="💖";
+        heartTimer=startHearts();
+        return;
     }
-});
 
-audio.addEventListener("ended", () => {
-    playPause.textContent = "▶️";
-    progress.style.width = "0%";
-});
+    attempts++;
+
+    if(attempts===1){
+        showToast("😇✨ Olsun… <i>melekler de yanılabilir</i> ✨😇");
+        stopHearts();
+        heartInterval=900;
+        heartTimer=startHearts();
+    }
+    else if(attempts===2){
+        showToast("🥺💔 <b>Hadi ama… doğum günümü bilmiyor musun?</b>");
+        stopHearts();
+    }
+    else{
+        showToast("😌💔 <b>Bravo…</b>");
+        stopHearts();
+        heartInterval=600;
+        heartType="💔";
+        heartTimer=startHearts();
+    }
+}
 </script>
 
 </body>
