@@ -17,7 +17,6 @@ body{
     url("https://i.ibb.co/C5f42gTy/MG-20260112-WA0029.jpg") center/cover no-repeat;
 }
 
-/* Toast */
 .toast{
     position:fixed;top:-120px;left:50%;
     transform:translateX(-50%);
@@ -27,12 +26,10 @@ body{
 }
 .toast.show{top:18px}
 
-/* Üst katman */
 .container{
     position:fixed;inset:0;
     display:flex;align-items:center;justify-content:center;
-    pointer-events:none;
-    z-index:10;
+    pointer-events:none;z-index:10;
 }
 .card{
     pointer-events:auto;
@@ -41,35 +38,35 @@ body{
     color:white;text-align:center;
 }
 
+.lock input,.lock button{
+    width:100%;max-width:220px;
+    padding:10px;border-radius:20px;border:none;
+}
+.lock button{margin-top:8px;background:#ff4d6d;color:white}
+
+.secret{display:none;margin-top:12px}
+
 /* ❤️ Kalpler */
 .heart{
-    position:fixed;
-    bottom:-60px;
+    position:fixed;bottom:-60px;
     font-size:32px;
     animation:float 6s linear forwards;
-    z-index:2;
-    pointer-events:auto;
-    user-select:none;
+    z-index:2;pointer-events:auto;
 }
 @keyframes float{
     to{transform:translateY(-120vh);opacity:0}
 }
 
 /* 💥 Patlama */
-.boom{
-    animation:boom .4s ease-out forwards!important;
-}
+.boom{animation:boom .4s ease-out forwards!important}
 @keyframes boom{
     to{transform:scale(2.2);opacity:0}
 }
 
-/* 💬 Yazı */
 .loveText{
-    position:fixed;
-    color:white;
+    position:fixed;color:white;
     animation:textUp 1.2s forwards;
-    pointer-events:none;
-    z-index:3;
+    pointer-events:none;z-index:3;
 }
 @keyframes textUp{
     to{transform:translateY(-40px);opacity:0}
@@ -104,7 +101,7 @@ body{
 <script>
 document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 
-/* Sayaç */
+/* Sayaçlar */
 const start=new Date();start.setDate(start.getDate()-8);
 counter.innerHTML=`💞 Tanışalı ${Math.floor((Date.now()-start)/86400000)} gün oldu`;
 
@@ -121,55 +118,16 @@ const showToast=m=>{
  setTimeout(()=>toast.classList.remove("show"),2600);
 };
 
-/* Yazılar */
-const loveMessages = [
-  "Seni seviyorum 💖",
-  "Aşkım 💕",
-  "Kalbim sensin 💓",
-  "Ömrüm 💘",
-  "Ruh eşim 💫",
-  "Bitanem 💗",
-  "Her şeyim 💝",
-  "Canımın içi 💞",
-  "Hayatım 🥰",
-  "Nefesimsin 💨💓",
-  "İyi ki varsın ✨",
-  "Gülüşüne kurban 🌸",
-  "Kalbimin sahibi ❤️",
-  "Sana aşığım 💘",
-  "Dünyam 🌍💖",
-  "Vazgeçilmezim 💞",
-  "Bir tanem 💕",
-  "Mutluluğum 😊💖",
-  "Aklım kalbim sensin 💓",
-  "Sonsuzum ♾️💖",
-  "Benimsin 💞",
-  "Sevgilim 💕",
-  "Tek gerçeğim 💖",
-  "Cennetim 🌹",
-  "Masalım ✨💗",
-  "İyi ki benimlesin 💓",
-  "Kalbim sana ait 🔐❤️",
-  "Aşkın en güzeli sensin 💘",
-  "Kalbime yazıldın 💖",
-  "Gözlerimin nuru ✨",
-  "Kalbimde evin var 🏡❤️",
-  "Adını kalbime kazıdım 💘",
-  "Bir ömür sen 💞",
-  "Rüyalarımın gerçeği ✨💖",
-  "Kalbim hep seni seçer ❤️",
-  "Sana her gün yeniden aşık oluyorum 💕",
-  "Kalbim sen diye atıyor 💓",
-  "Sen benim mucizemsin ✨",
-  "Aşk sana çok yakışıyor 💘",
-  "Ben seni çok sevdim 💖",
-  "Kalbimin en güzel yeri sen 💗",
-  "Sen varken her şey tamam 💞",
-  "İyi ki kalbimdesin ❤️",
-  "Sen benim en güzel alışkanlığımsın 💕",
-  "Kalbim sana emanet 🔐💖"
+/* Sevgi yazıları */
+const loveMessages=[
+  "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Ömrüm 💘",
+  "Ruh eşim 💫","Bitanem 💗","Her şeyim 💝","Canımın içi 💞",
+  "Hayatım 🥰","İyi ki varsın ✨","Kalbimin sahibi ❤️",
+  "Sana aşığım 💘","Dünyam 🌍💖","Vazgeçilmezim 💞",
+  "Sonsuzum ♾️💖","Kalbim sana ait 🔐❤️"
 ];
-/* ❤️ Kalp motoru */
+
+/* ❤️ Kalpler */
 let interval,paused=false,broken=false;
 
 function startHearts(){
@@ -182,9 +140,8 @@ function startHearts(){
   h.textContent=broken?"💔":"💖";
   h.style.left=Math.random()*100+"vw";
 
-  /* ⬇⬇⬇ PATLAMA BURADA */
   h.addEventListener("pointerdown",e=>{
-    if(broken) return; // 💔 patlamaz
+    if(broken) return;
     h.classList.add("boom");
 
     const t=document.createElement("div");
@@ -211,13 +168,14 @@ function check(){
  if(v==="17nisan"){
   secret.style.display="block";
   showToast("💖 BİLİYODUMMM!");
-  broken=false;
-  paused=false;
+  broken=false; paused=false;
   startHearts();
   return;
  }
 
+ secret.style.display="none";
  attempts++;
+
  if(attempts===1){
   showToast("😇 Olsun… ilk seferin normal 💕");
  }
@@ -226,8 +184,7 @@ function check(){
   showToast("😐 Umarım bu bir şakadır…");
  }
  else{
-  broken=true;
-  paused=false;
+  broken=true; paused=false;
   showToast("😌 Tamam… öyle olsun 💔");
  }
 }
