@@ -27,38 +27,29 @@ body{
 }
 .toast.show{top:18px}
 
-/* Container tıklama ALMAZ */
+/* Üst katman */
 .container{
     position:fixed;inset:0;
     display:flex;align-items:center;justify-content:center;
     pointer-events:none;
     z-index:10;
 }
-
-/* Kart tıklama ALIR */
 .card{
     pointer-events:auto;
     width:360px;max-width:92vw;padding:18px;
     border-radius:20px;background:rgba(0,0,0,.35);
     color:white;text-align:center;
 }
-h1{text-shadow:0 0 18px black,0 0 30px pink}
 
-.lock input,.lock button{
-    width:100%;max-width:220px;
-    padding:10px;border-radius:20px;border:none;
-}
-.lock button{margin-top:8px;background:#ff4d6d;color:white}
-.secret{display:none;margin-top:12px}
-
-/* ❤️ Kalpler (arkada + tıklanabilir) */
+/* ❤️ Kalpler */
 .heart{
-    position:fixed;bottom:-60px;
-    font-size:30px;
+    position:fixed;
+    bottom:-60px;
+    font-size:32px;
     animation:float 6s linear forwards;
-    cursor:pointer;
     z-index:2;
     pointer-events:auto;
+    user-select:none;
 }
 @keyframes float{
     to{transform:translateY(-120vh);opacity:0}
@@ -66,15 +57,16 @@ h1{text-shadow:0 0 18px black,0 0 30px pink}
 
 /* 💥 Patlama */
 .boom{
-    animation:boom .45s ease-out forwards!important;
+    animation:boom .4s ease-out forwards!important;
 }
 @keyframes boom{
-    to{transform:scale(2);opacity:0}
+    to{transform:scale(2.2);opacity:0}
 }
 
 /* 💬 Yazı */
 .loveText{
-    position:fixed;color:white;
+    position:fixed;
+    color:white;
     animation:textUp 1.2s forwards;
     pointer-events:none;
     z-index:3;
@@ -112,7 +104,7 @@ h1{text-shadow:0 0 18px black,0 0 30px pink}
 <script>
 document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 
-/* Sayaçlar */
+/* Sayaç */
 const start=new Date();start.setDate(start.getDate()-8);
 counter.innerHTML=`💞 Tanışalı ${Math.floor((Date.now()-start)/86400000)} gün oldu`;
 
@@ -129,14 +121,13 @@ const showToast=m=>{
  setTimeout(()=>toast.classList.remove("show"),2600);
 };
 
-/* Sevgi yazıları */
+/* Yazılar */
 const loveMessages=[
  "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓",
- "Ömrüm 💘","Ruh eşim 💫","Bitanem 💗",
- "Gülüşüne kurban 🌸","Sana aşığım 💘"
+ "Ömrüm 💘","Ruh eşim 💫","Bitanem 💗"
 ];
 
-/* ❤️ Kalpler */
+/* ❤️ Kalp motoru */
 let interval,paused=false,broken=false;
 
 function startHearts(){
@@ -146,13 +137,12 @@ function startHearts(){
 
   const h=document.createElement("div");
   h.className="heart";
-  h.innerHTML=broken?"💔":"💖";
+  h.textContent=broken?"💔":"💖";
   h.style.left=Math.random()*100+"vw";
 
-  h.onclick=e=>{
+  /* ⬇⬇⬇ PATLAMA BURADA */
+  h.addEventListener("pointerdown",e=>{
     if(broken) return; // 💔 patlamaz
-    if(h.dataset.dead) return;
-    h.dataset.dead=1;
     h.classList.add("boom");
 
     const t=document.createElement("div");
@@ -162,12 +152,12 @@ function startHearts(){
     t.style.top=e.clientY+"px";
     document.body.appendChild(t);
 
-    setTimeout(()=>{h.remove();t.remove()},500);
-  };
+    setTimeout(()=>{h.remove();t.remove()},400);
+  });
 
   document.body.appendChild(h);
   setTimeout(()=>h.remove(),6000);
- },300);
+ },280);
 }
 startHearts();
 
@@ -178,26 +168,28 @@ function check(){
 
  if(v==="17nisan"){
   secret.style.display="block";
-  showToast("💖 İşte bu… kalpler yine sana ait!");
-  broken=false; paused=false;
+  showToast("💖 BİLİYODUMMM!");
+  broken=false;
+  paused=false;
   startHearts();
   return;
  }
 
  attempts++;
-
  if(attempts===1){
-  showToast("😇 Olsun… ilk seferin normal, olur böyle şeyler 💕");
+  showToast("😇 Olsun… ilk seferin normal 💕");
  }
  else if(attempts===2){
   paused=true;
-  showToast("😐 Umarım bu bir şakadır… çünkü kalbim buna hazır değil");
+  showToast("😐 Umarım bu bir şakadır…");
  }
  else{
-  broken=true; paused=false;
-  showToast("😌 Tamam… öyle olsun, kalpler de kırılır bazen 💔");
+  broken=true;
+  paused=false;
+  showToast("😌 Tamam… öyle olsun 💔");
  }
 }
 </script>
+
 </body>
 </html>
