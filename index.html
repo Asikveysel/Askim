@@ -2,27 +2,35 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Aşkım 💖</title>
 
 <style>
-*{box-sizing:border-box}
-
-body{
+/* 🔒 TAM KİLİT */
+html,body{
     margin:0;
-    height:100vh;
+    padding:0;
+    width:100%;
+    height:100%;
     overflow:hidden;
-    background:
-      linear-gradient(rgba(255,0,80,0.45), rgba(255,0,80,0.45)),
-      url("https://i.ibb.co/C5f42gTy/MG-20260112-WA0029.jpg") center/cover no-repeat;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    overscroll-behavior:none;
+    touch-action:none;
+    position:fixed;
     font-family:Arial,sans-serif;
-    text-align:center;
 }
 
-/* 🔔 Üst mesaj */
+/* 🖼️ ARKA PLAN */
+body{
+    background:
+      linear-gradient(rgba(255,0,80,0.45), rgba(255,0,80,0.45)),
+      url("https://i.ibb.co/C5f42gTy/MG-20260112-WA0029.jpg")
+      no-repeat center center fixed;
+    background-size:cover;
+}
+
+/* 🔔 Toast */
 .toast{
     position:fixed;
     top:-120px;
@@ -33,20 +41,25 @@ body{
     padding:14px 26px;
     border-radius:30px;
     font-size:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.35);
-    z-index:999;
+    z-index:1000;
     transition:top .6s ease;
 }
 .toast.show{top:18px}
 
+/* 🧱 ANA KUTU */
 .container{
-    background:rgba(0,0,0,0.35);
-    padding:18px;
-    border-radius:20px;
-    backdrop-filter:blur(4px);
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
     width:360px;
     max-width:92vw;
+    padding:18px;
+    border-radius:20px;
+    background:rgba(0,0,0,.35);
+    backdrop-filter:blur(4px);
     color:white;
+    text-align:center;
     z-index:10;
 }
 
@@ -59,41 +72,39 @@ h1{
 .lock input,.lock button{
     width:100%;
     max-width:220px;
+    padding:10px;
     border-radius:20px;
     border:none;
-    padding:10px;
 }
 .lock button{
+    margin-top:8px;
     background:#ff4d6d;
     color:white;
-    margin-top:8px;
 }
 
 /* 🔓 */
 .secret{
     display:none;
     margin-top:12px;
-    animation:fadeIn .8s ease forwards;
-}
-@keyframes fadeIn{
-    from{opacity:0;transform:translateY(8px)}
-    to{opacity:1;transform:none}
 }
 
-/* ❤️ Kalpler */
+/* ❤️ KALPLER (ARKA PLAN) */
 .heart{
-    position:absolute;
+    position:fixed;
+    bottom:-40px;
     font-size:20px;
-    animation:float 6s linear infinite;
+    animation:float 7s linear infinite;
     cursor:pointer;
+    z-index:1;
     will-change:transform,opacity;
 }
+
 @keyframes float{
-    from{transform:translateY(100vh);opacity:1}
-    to{transform:translateY(-10vh);opacity:0}
+    from{transform:translateY(0);opacity:1}
+    to{transform:translateY(-110vh);opacity:0}
 }
 
-/* 💦 Soft patlama */
+/* 💦 SOFT PATLAMA */
 .boom{
     animation:softBoom .6s ease-out forwards;
 }
@@ -101,14 +112,15 @@ h1{
     to{transform:scale(1.8);opacity:0}
 }
 
-/* ✨ Sevgi yazısı */
+/* ✨ YAZI */
 .loveText{
-    position:absolute;
+    position:fixed;
     font-size:14px;
     color:white;
     text-shadow:0 0 8px pink;
     animation:loveFloat 1.2s ease-out forwards;
     pointer-events:none;
+    z-index:2;
 }
 @keyframes loveFloat{
     from{opacity:0;transform:translateY(0)}
@@ -141,17 +153,16 @@ h1{
 </div>
 
 <script>
-// 💞 Tanışma
-const start=new Date(); start.setDate(start.getDate()-8);
-counter.innerHTML=`💞 Tanışalı <b>${Math.floor((Date.now()-start)/86400000)}</b> gün oldu`;
+// Sayaçlar
+const start=new Date();start.setDate(start.getDate()-8);
+counter.innerHTML=`💞 Tanışalı ${Math.floor((Date.now()-start)/86400000)} gün oldu`;
 
-// 🎂 Sayaç
 const now=new Date();
 let bd=new Date(now.getFullYear(),1,9);
 if(now>bd) bd=new Date(now.getFullYear()+1,1,9);
-birthday.innerHTML=`🎈 Doğum gününe <b>${Math.ceil((bd-now)/86400000)}</b> gün kaldı`;
+birthday.innerHTML=`🎈 Doğum gününe ${Math.ceil((bd-now)/86400000)} gün kaldı`;
 
-// 🔔 Toast
+// Toast
 const toast=document.getElementById("toast");
 const showToast=m=>{
     toast.innerHTML=m;
@@ -159,28 +170,25 @@ const showToast=m=>{
     setTimeout(()=>toast.classList.remove("show"),2400);
 };
 
-// ❤️ Sevgi yazıları
+// Sevgi yazıları
 const loveMessages=[
  "Seni seviyorum 💖",
  "İyi ki varsın ✨",
  "Aşkım 💕",
  "Kalbim sensin 💓",
- "Benim güzelim 💗",
  "Canımın içi 💞"
 ];
 
-// ❤️ Kalp sistemi (OPTİMİZE)
-let heartInterval=160;
-let heartType="💖";
-let hearts=0;
-const MAX_HEARTS=25;
+// ❤️ Kalpler (STABİL)
+let hearts=0, MAX=20;
 
 setInterval(()=>{
-    if(hearts>=MAX_HEARTS) return;
+    if(hearts>=MAX) return;
     hearts++;
+
     const h=document.createElement("div");
     h.className="heart";
-    h.innerHTML=heartType;
+    h.innerHTML="💖";
     h.style.left=Math.random()*100+"vw";
 
     h.onclick=e=>{
@@ -188,24 +196,23 @@ setInterval(()=>{
         const t=document.createElement("div");
         t.className="loveText";
         t.innerHTML=loveMessages[Math.random()*loveMessages.length|0];
-        t.style.left=h.style.left;
+        t.style.left=e.clientX+"px";
         t.style.top=e.clientY+"px";
         document.body.appendChild(t);
         setTimeout(()=>t.remove(),1200);
     };
 
     document.body.appendChild(h);
-    setTimeout(()=>{h.remove();hearts--;},6000);
-},heartInterval);
+    setTimeout(()=>{h.remove();hearts--;},7000);
+},350);
 
 // 🔐 Şifre
 let attempts=0;
 function check(){
     const v=password.value.toLowerCase().replace(/\s+/g,"");
     if(v==="17nisan"){
-        attempts=0;
         secret.style.display="block";
-        showToast("💖✨ BİLİYODUMM! ✨💖");
+        showToast("💖 BİLİYODUMM!");
         return;
     }
     attempts++;
