@@ -56,13 +56,10 @@ body{
 @keyframes float{
     to{transform:translateY(-120vh);opacity:0}
 }
-
-/* 💥 Patlama */
 .boom{animation:boom .4s ease-out forwards!important}
 @keyframes boom{
     to{transform:scale(2.2);opacity:0}
 }
-
 .loveText{
     position:fixed;color:white;
     animation:textUp 1.2s forwards;
@@ -101,14 +98,32 @@ body{
 <script>
 document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 
-/* Sayaçlar */
-const start=new Date();start.setDate(start.getDate()-8);
-counter.innerHTML=`💞 Tanışalı ${Math.floor((Date.now()-start)/86400000)} gün oldu`;
+/* 📅 TARİHLER */
+const startDate = new Date(2026,0,4); // 4 Ocak
+startDate.setHours(0,0,0,0);
 
-const now=new Date();
-let bd=new Date(now.getFullYear(),1,9);
-if(now>bd) bd=new Date(now.getFullYear()+1,1,9);
-birthday.innerHTML=`🎈 Doğum gününe ${Math.ceil((bd-now)/86400000)} gün kaldı`;
+function getBirthdayDate(){
+  const now=new Date();
+  let bd=new Date(now.getFullYear(),1,9); // 9 Şubat
+  bd.setHours(0,0,0,0);
+  if(now.setHours(0,0,0,0) > bd){
+    bd=new Date(now.getFullYear()+1,1,9);
+    bd.setHours(0,0,0,0);
+  }
+  return bd;
+}
+
+function updateCounters(){
+  const now=new Date();now.setHours(0,0,0,0);
+  const together=Math.floor((now-startDate)/86400000);
+  counter.innerHTML=`💞 Tanışalı ${together} gün oldu`;
+
+  const bd=getBirthdayDate();
+  const remain=Math.ceil((bd-now)/86400000);
+  birthday.innerHTML=`🎈 Doğum gününe ${remain} gün kaldı`;
+}
+updateCounters();
+setInterval(updateCounters,60000);
 
 /* Toast */
 const toast=document.getElementById("toast");
@@ -118,63 +133,34 @@ const showToast=m=>{
  setTimeout(()=>toast.classList.remove("show"),2600);
 };
 
-/* Sevgi yazıları */
+/* ❤️ SEVGİ YAZILARI (SENİN VERDİĞİN TAM LİSTE) */
 const loveMessages = [
-  "Seni seviyorum 💖",
-  "Aşkım 💕",
-  "Kalbim sensin 💓",
-  "Ömrüm 💘",
-  "Ruh eşim 💫",
-  "Bitanem 💗",
-  "Her şeyim 💝",
-  "Canımın içi 💞",
-  "Hayatım 🥰",
-  "Nefesimsin 💨💓",
-  "İyi ki varsın ✨",
-  "Gülüşüne kurban 🌸",
-  "Kalbimin sahibi ❤️",
-  "Sana aşığım 💘",
-  "Dünyam 🌍💖",
-  "Vazgeçilmezim 💞",
-  "Bir tanem 💕",
-  "Mutluluğum 😊💖",
-  "Aklım kalbim sensin 💓",
-  "Sonsuzum ♾️💖",
-  "Benimsin 💞",
-  "Sevgilim 💕",
-  "Tek gerçeğim 💖",
-  "Cennetim 🌹",
-  "Masalım ✨💗",
-  "İyi ki benimlesin 💓",
-  "Kalbim sana ait 🔐❤️",
-  "Aşkın en güzeli sensin 💘",
-  "Kalbime yazıldın 💖",
-  "Gözlerimin nuru ✨",
-  "Kalbimde evin var 🏡❤️",
-  "Adını kalbime kazıdım 💘",
-  "Bir ömür sen 💞",
-  "Rüyalarımın gerçeği ✨💖",
+  "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Ömrüm 💘",
+  "Ruh eşim 💫","Bitanem 💗","Her şeyim 💝","Canımın içi 💞",
+  "Hayatım 🥰","Nefesimsin 💨💓","İyi ki varsın ✨","Gülüşüne kurban 🌸",
+  "Kalbimin sahibi ❤️","Sana aşığım 💘","Dünyam 🌍💖","Vazgeçilmezim 💞",
+  "Bir tanem 💕","Mutluluğum 😊💖","Aklım kalbim sensin 💓",
+  "Sonsuzum ♾️💖","Benimsin 💞","Sevgilim 💕","Tek gerçeğim 💖",
+  "Cennetim 🌹","Masalım ✨💗","İyi ki benimlesin 💓",
+  "Kalbim sana ait 🔐❤️","Aşkın en güzeli sensin 💘",
+  "Kalbime yazıldın 💖","Gözlerimin nuru ✨",
+  "Kalbimde evin var 🏡❤️","Adını kalbime kazıdım 💘",
+  "Bir ömür sen 💞","Rüyalarımın gerçeği ✨💖",
   "Kalbim hep seni seçer ❤️",
   "Sana her gün yeniden aşık oluyorum 💕",
-  "Kalbim sen diye atıyor 💓",
-  "Sen benim mucizemsin ✨",
-  "Aşk sana çok yakışıyor 💘",
-  "Ben seni çok sevdim 💖",
-  "Kalbimin en güzel yeri sen 💗",
-  "Sen varken her şey tamam 💞",
-  "İyi ki kalbimdesin ❤️",
-  "Sen benim en güzel alışkanlığımsın 💕",
+  "Kalbim sen diye atıyor 💓","Sen benim mucizemsin ✨",
+  "Aşk sana çok yakışıyor 💘","Ben seni çok sevdim 💖",
+  "Kalbimin en güzel yeri sen 💗","Sen varken her şey tamam 💞",
+  "İyi ki kalbimdesin ❤️","Sen benim en güzel alışkanlığımsın 💕",
   "Kalbim sana emanet 🔐💖"
 ];
 
 /* ❤️ Kalpler */
 let interval,paused=false,broken=false;
-
 function startHearts(){
  clearInterval(interval);
  interval=setInterval(()=>{
   if(paused) return;
-
   const h=document.createElement("div");
   h.className="heart";
   h.textContent=broken?"💔":"💖";
@@ -183,14 +169,12 @@ function startHearts(){
   h.addEventListener("pointerdown",e=>{
     if(broken) return;
     h.classList.add("boom");
-
     const t=document.createElement("div");
     t.className="loveText";
     t.textContent=loveMessages[Math.random()*loveMessages.length|0];
     t.style.left=e.clientX+"px";
     t.style.top=e.clientY+"px";
     document.body.appendChild(t);
-
     setTimeout(()=>{h.remove();t.remove()},400);
   });
 
@@ -204,29 +188,18 @@ startHearts();
 let attempts=0;
 function check(){
  const v=password.value.toLowerCase().replace(/\s+/g,"");
-
  if(v==="17nisan"){
   secret.style.display="block";
   showToast("💖 BİLİYODUMMM!");
-  broken=false; paused=false;
+  broken=false;paused=false;
   startHearts();
   return;
  }
-
  secret.style.display="none";
  attempts++;
-
- if(attempts===1){
-  showToast("😇 Olsun… ilk seferin normal 💕");
- }
- else if(attempts===2){
-  paused=true;
-  showToast("😐 Umarım bu bir şakadır…");
- }
- else{
-  broken=true; paused=false;
-  showToast("😌 Tamam… öyle olsun 💔");
- }
+ if(attempts===1) showToast("😇 Olsun… ilk seferin normal 💕");
+ else if(attempts===2){paused=true;showToast("😐 Umarım bu bir şakadır…");}
+ else{broken=true;paused=false;showToast("😌 Tamam… öyle olsun 💔");}
 }
 </script>
 
