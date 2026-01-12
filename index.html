@@ -2,53 +2,47 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Aşkım 💖</title>
 
 <style>
-/* 🔒 KESİN KİLİT */
 html,body{
     margin:0;
     padding:0;
     width:100%;
     height:100%;
     overflow:hidden;
-    overscroll-behavior:none;
-    touch-action:none;
     position:fixed;
-    top:0;
-    left:0;
+    inset:0;
+    touch-action:none;
+    overscroll-behavior:none;
     font-family:Arial,sans-serif;
 }
 
-/* 🖼️ ARKA PLAN */
 body{
     background:
       linear-gradient(rgba(255,0,80,0.45), rgba(255,0,80,0.45)),
       url("https://i.ibb.co/C5f42gTy/MG-20260112-WA0029.jpg")
-      no-repeat center center;
-    background-size:cover;
+      center/cover no-repeat;
 }
 
-/* 🔔 Toast */
+/* TOAST */
 .toast{
     position:fixed;
-    top:-120px;
+    top:-100px;
     left:50%;
     transform:translateX(-50%);
+    padding:14px 28px;
     background:linear-gradient(135deg,#ff4d6d,#ff8fa3);
     color:white;
-    padding:14px 26px;
     border-radius:30px;
     font-size:15px;
     z-index:1000;
-    transition:top .6s ease;
+    transition:.6s;
 }
 .toast.show{top:18px}
 
-/* 🧱 ANA KUTU */
+/* ANA */
 .container{
     position:fixed;
     inset:0;
@@ -62,7 +56,7 @@ body{
     width:360px;
     max-width:92vw;
     padding:18px;
-    border-radius:20px;
+    border-radius:22px;
     background:rgba(0,0,0,.35);
     backdrop-filter:blur(4px);
     color:white;
@@ -74,7 +68,7 @@ h1{
     text-shadow:0 0 18px black,0 0 30px pink;
 }
 
-/* 🔐 */
+/* ŞİFRE */
 .lock input,.lock button{
     width:100%;
     max-width:220px;
@@ -88,44 +82,37 @@ h1{
     color:white;
 }
 
-/* 🔓 */
-.secret{
-    display:none;
-    margin-top:12px;
-}
+.secret{display:none;margin-top:12px}
 
 /* ❤️ KALPLER */
 .heart{
     position:fixed;
     bottom:-60px;
-    font-size:28px;
+    font-size:36px;
     animation:float 6s linear infinite;
     z-index:1;
     cursor:pointer;
 }
-
-/* 👆 GÖRÜNMEZ DOKUNMA ALANI */
 .heart::after{
     content:"";
     position:absolute;
-    inset:-15px;
+    inset:-18px;
 }
 
-/* Yükselme */
 @keyframes float{
     from{transform:translateY(0);opacity:1}
     to{transform:translateY(-120vh);opacity:0}
 }
 
-/* 💦 SOFT PATLAMA */
+/* PATLAMA */
 .boom{
-    animation:softBoom .5s ease-out forwards;
+    animation:softBoom .45s ease-out forwards;
 }
 @keyframes softBoom{
     to{transform:scale(1.7);opacity:0}
 }
 
-/* ✨ Yazı */
+/* YAZI */
 .loveText{
     position:fixed;
     font-size:15px;
@@ -168,7 +155,7 @@ h1{
 </div>
 
 <script>
-/* 🔒 iOS + Android kesin kilit */
+// 🔒 KESİN KİLİT
 document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
 
 // Sayaçlar
@@ -188,17 +175,22 @@ const showToast=m=>{
     setTimeout(()=>toast.classList.remove("show"),2400);
 };
 
-// Sevgi yazıları
+// 💬 ÇOK ÇEŞİTLİ SEVGİ MESAJLARI
 const loveMessages=[
- "Seni seviyorum 💖",
- "İyi ki varsın ✨",
- "Aşkım 💕",
- "Kalbim sensin 💓",
- "Canımın içi 💞"
+ "Seni seviyorum 💖","İyi ki varsın ✨","Aşkım 💕","Kalbim sensin 💓",
+ "Canımın içi 💞","Ruhum sana ait 💘","Bir tanem 🌸","Her şeyim 💝",
+ "Nefesimsin 🌙","Bir ömür sen 💍","Kalbimin sahibi 💗",
+ "İyi ki benimlesin ✨","Sana aşığım 💕","Mutluluğum sensin 💓",
+ "Kalbim sen diye atıyor 💘","Hep sen 💖","Benim mucizem ✨"
 ];
 
-// ❤️ Kalpler (BÜYÜK + HIZLI + YAKALANIR)
-let hearts=0, MAX=18;
+// 🔊 BLUP SES MOTORU
+const blupBase=new Audio("blup.mp3");
+blupBase.volume=0.5;
+blupBase.preload="auto";
+
+// ❤️ KALPLER
+let hearts=0, MAX=20;
 
 setInterval(()=>{
     if(hearts>=MAX) return;
@@ -208,6 +200,7 @@ setInterval(()=>{
     h.className="heart";
     h.innerHTML="💖";
     h.style.left=Math.random()*100+"vw";
+    h.style.fontSize=(32+Math.random()*14)+"px";
 
     h.addEventListener("click",e=>{
         h.classList.add("boom");
@@ -218,15 +211,17 @@ setInterval(()=>{
         t.style.left=e.clientX+"px";
         t.style.top=e.clientY+"px";
         document.body.appendChild(t);
-
         setTimeout(()=>t.remove(),1200);
+
+        const blup=blupBase.cloneNode();
+        blup.play().catch(()=>{});
     });
 
     document.body.appendChild(h);
     setTimeout(()=>{h.remove();hearts--;},6000);
-},280);
+},250);
 
-// 🔐 Şifre
+// 🔐 ŞİFRE
 let attempts=0;
 function check(){
     const v=password.value.toLowerCase().replace(/\s+/g,"");
