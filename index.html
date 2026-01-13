@@ -2,162 +2,106 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Aşkım 💖</title>
 
 <style>
 html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
+  margin:0;padding:0;width:100%;height:100%;
+  overflow:hidden;position:fixed;
   font-family:Arial,sans-serif;
 }
 
 body{
   background:
-    linear-gradient(rgba(255,0,80,0.45),rgba(255,0,80,0.45)),
+    linear-gradient(rgba(255,0,80,0.45), rgba(255,0,80,0.45)),
     url("https://i.ibb.co/C5f42gTy/MG-20260112-WA0029.jpg")
     no-repeat center/cover;
 }
 
-/* TOAST */
-#toast{
-  position:fixed;
-  top:-120px;
-  left:50%;
+/* Toast */
+.toast{
+  position:fixed;top:-120px;left:50%;
   transform:translateX(-50%);
   background:linear-gradient(135deg,#ff4d6d,#ff8fa3);
-  color:white;
-  padding:14px 26px;
-  border-radius:30px;
-  font-size:15px;
-  transition:top .6s ease;
-  z-index:9999;
+  color:#fff;padding:14px 26px;border-radius:30px;
+  z-index:1000;transition:.6s;
 }
-#toast.show{top:18px}
+.toast.show{top:18px}
 
-/* KART */
+/* Card */
 .container{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:10;
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  z-index:10;pointer-events:none;
 }
 .card{
-  width:360px;
-  max-width:92vw;
-  padding:18px;
-  border-radius:20px;
+  pointer-events:auto;
+  width:360px;max-width:92vw;
+  padding:18px;border-radius:20px;
   background:rgba(0,0,0,.35);
-  backdrop-filter:blur(4px);
-  color:white;
-  text-align:center;
-  z-index:11;
+  color:#fff;text-align:center;
 }
+h1{text-shadow:0 0 20px black}
 
-h1{
-  font-size:clamp(24px,6vw,38px);
-  text-shadow:0 0 18px black,0 0 30px pink;
-}
-
-#counter,#birthday{
-  margin:8px 0;
-  font-size:17px;
-}
-
-/* ŞİFRE */
+/* Lock */
 .lock input,.lock button{
-  width:100%;
-  max-width:220px;
-  padding:10px;
-  border-radius:20px;
-  border:none;
+  width:100%;max-width:220px;
+  padding:10px;border-radius:20px;border:none;
 }
-.lock button{
-  margin-top:8px;
-  background:#ff4d6d;
-  color:white;
-}
+.lock button{background:#ff4d6d;color:#fff;margin-top:8px}
+.secret{display:none;margin-top:12px}
 
-/* GİZLİ SES */
-.secret{
-  display:none;
-  margin-top:12px;
-}
-
-/* KALPLER (ARKA PLAN) */
+/* Hearts */
 .heart{
   position:fixed;
   bottom:-60px;
   font-size:28px;
-  animation:float 6s linear forwards;
+  animation:float 6s linear infinite;
   z-index:1;
-  user-select:none;
+  pointer-events:auto;
 }
 @keyframes float{
   to{transform:translateY(-120vh);opacity:0}
 }
-
-/* PATLAMA */
-.boom{
-  animation:boom .4s ease-out forwards;
-}
+.boom{animation:boom .4s forwards}
 @keyframes boom{
-  to{transform:scale(1.8);opacity:0}
+  to{transform:scale(1.7);opacity:0}
 }
 
-/* SEVGİ YAZISI */
+/* Love text */
 .loveText{
   position:fixed;
   font-size:15px;
-  color:white;
+  color:#fff;
   text-shadow:0 0 8px pink;
-  animation:loveFloat 1.2s ease-out forwards;
+  animation:love 1.2s forwards;
+  z-index:2;
   pointer-events:none;
-  z-index:3;
 }
-@keyframes loveFloat{
-  from{opacity:0;transform:translateY(0)}
-  30%{opacity:1}
+@keyframes love{
   to{opacity:0;transform:translateY(-40px)}
-}
-  /* 🔒 DOKUNMA KİLİDİ ÇÖZÜMÜ */
-.container{
-  pointer-events:none;
-}
-
-.card{
-  pointer-events:auto;
-}
-
-.heart{
-  pointer-events:auto;
 }
 </style>
 </head>
 
 <body>
 
-<div id="toast"></div>
+<div id="toast" class="toast"></div>
 
 <div class="container">
   <div class="card">
     <h1>💖 GÜZEL KARIM BENİM<br>SENİ ÇOK SEVİYORUM 💖</h1>
-
     <div id="counter"></div>
     <div id="birthday"></div>
 
     <div class="lock">
       🔒 İpucu: <b>Doğum günüm</b><br>
-      <input id="password" placeholder="Şifreyi yaz">
+      <input id="password" placeholder="Şifre">
       <button onclick="check()">Giriş</button>
     </div>
 
-    <div class="secret" id="secret">
+    <div id="secret" class="secret">
       💌 Bu sesi sadece sana kaydettim 💖<br><br>
       <audio controls src="sesim.mp3" style="width:100%"></audio>
     </div>
@@ -165,128 +109,110 @@ h1{
 </div>
 
 <script>
-/* ================= TOAST ================= */
+document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
+
+/* Sayaçlar */
+const meetDate = new Date(2026,0,4);
+const today = new Date();
+const days = Math.floor((today - meetDate)/86400000)+1;
+counter.innerHTML = `💞 Tanışalı ${days} gün oldu`;
+
+let bd = new Date(today.getFullYear(),1,9);
+if(today > bd) bd = new Date(today.getFullYear()+1,1,9);
+birthday.innerHTML = `🎈 Doğum gününe ${Math.ceil((bd-today)/86400000)} gün kaldı`;
+
+/* Toast */
 const toast = document.getElementById("toast");
-function showToast(m){
-  toast.textContent = m;
+const showToast = t=>{
+  toast.textContent=t;
   toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show"),2500);
-}
+  setTimeout(()=>toast.classList.remove("show"),2400);
+};
 
-/* ================= SAYAÇLAR ================= */
-function dayStart(d){ d.setHours(0,0,0,0); return d; }
-
-function updateCounters(){
-  const today = dayStart(new Date());
-  const start = dayStart(new Date(2026,0,4)); // 4 Ocak
-  const diff = Math.floor((today-start)/86400000)+1;
-  counter.textContent = `💞 Tanışalı ${diff} gün oldu`;
-
-  let bd = dayStart(new Date(today.getFullYear(),1,9)); // 9 Şubat
-  if(today>bd) bd = dayStart(new Date(today.getFullYear()+1,1,9));
-  birthday.textContent = `🎈 Doğum gününe ${Math.ceil((bd-today)/86400000)} gün kaldı`;
-}
-updateCounters();
-setInterval(updateCounters,60000);
-
-/* ================= SEVGİ MESAJLARI ================= */
+/* Sevgi yazıları */
 const loveMessages = [
-  "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Ömrüm 💘","Ruh eşim 💫",
-  "Bitanem 💗","Her şeyim 💝","Canımın içi 💞","Hayatım 🥰","Nefesimsin 💨💓",
-  "İyi ki varsın ✨","Gülüşüne kurban 🌸","Kalbimin sahibi ❤️","Sana aşığım 💘",
-  "Dünyam 🌍💖","Vazgeçilmezim 💞","Bir tanem 💕","Mutluluğum 😊💖",
-  "Aklım kalbim sensin 💓","Sonsuzum ♾️💖","Benimsin 💞","Sevgilim 💕",
-  "Tek gerçeğim 💖","Cennetim 🌹","Masalım ✨💗","İyi ki benimlesin 💓",
-  "Kalbim sana ait 🔐❤️","Aşkın en güzeli sensin 💘","Kalbime yazıldın 💖",
-  "Gözlerimin nuru ✨","Kalbimde evin var 🏡❤️","Adını kalbime kazıdım 💘",
-  "Bir ömür sen 💞","Rüyalarımın gerçeği ✨💖","Kalbim hep seni seçer ❤️",
-  "Sana her gün yeniden aşık oluyorum 💕","Kalbim sen diye atıyor 💓",
-  "Sen benim mucizemsin ✨","Aşk sana çok yakışıyor 💘","Ben seni çok sevdim 💖",
-  "Kalbimin en güzel yeri sen 💗","Sen varken her şey tamam 💞",
-  "İyi ki kalbimdesin ❤️","Sen benim en güzel alışkanlığımsın 💕",
-  "Kalbim sana emanet 🔐💖"
+  "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Ömrüm 💘",
+  "Ruh eşim 💫","Bitanem 💗","Her şeyim 💝","Canımın içi 💞",
+  "Hayatım 🥰","İyi ki varsın ✨","Kalbimin sahibi ❤️",
+  "Sana aşığım 💘","Bir ömür sen 💞","Kalbim sana ait 🔐❤️"
 ];
 
-/* ================= KALP SİSTEMİ ================= */
-let heartTimer = null;
-let maxHearts = 18;
-let brokenMode = false;
-
-function startHearts(){
-  stopHearts();
-  heartTimer = setInterval(createHeart,300);
-}
-
-function stopHearts(){
-  if(heartTimer){
-    clearInterval(heartTimer);
-    heartTimer = null;
-  }
-}
+/* Kalp kontrol */
+let hearts=0, MAX=18;
+let attempts=0;
+let disableBoom=false;
+let brokenMode=false;
+let heartsEnabled=true;
 
 function createHeart(){
-  const h = document.createElement("div");
-  h.className = "heart";
+  const h=document.createElement("div");
+  h.className="heart";
   h.textContent = brokenMode ? "💔" : "💖";
-  h.style.left = Math.random()*100+"vw";
-
-  if(!brokenMode){
-    h.addEventListener("click", boomHeart);
-    h.addEventListener("touchstart", boomHeart);
-  }
-
+  h.style.left=Math.random()*100+"vw";
   document.body.appendChild(h);
   setTimeout(()=>h.remove(),6000);
-
-  function boomHeart(e){
-    h.classList.add("boom");
-
-    const x = e.touches ? e.touches[0].clientX : e.clientX;
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-
-    const t = document.createElement("div");
-    t.className = "loveText";
-    t.textContent = loveMessages[Math.floor(Math.random()*loveMessages.length)];
-    t.style.left = x+"px";
-    t.style.top = y+"px";
-    document.body.appendChild(t);
-
-    setTimeout(()=>t.remove(),1200);
-  }
 }
 
-startHearts();
+/* Üretim */
+setInterval(()=>{
+  if(!heartsEnabled) return;
+  if(hearts>=MAX) return;
+  hearts++;
+  createHeart();
+  setTimeout(()=>hearts--,6000);
+},280);
 
-/* ================= ŞİFRE ================= */
-let attempts = 0;
+/* GLOBAL PATLAMA */
+document.addEventListener("click",handle,true);
+document.addEventListener("touchstart",handle,true);
 
+function handle(e){
+  const heart=e.target.closest(".heart");
+  if(!heart) return;
+  if(disableBoom || heart.textContent==="💔") return;
+
+  heart.classList.add("boom");
+
+  const x=e.touches?e.touches[0].clientX:e.clientX;
+  const y=e.touches?e.touches[0].clientY:e.clientY;
+
+  const t=document.createElement("div");
+  t.className="loveText";
+  t.textContent=loveMessages[Math.random()*loveMessages.length|0];
+  t.style.left=x+"px";t.style.top=y+"px";
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),1200);
+}
+
+/* Şifre */
 function check(){
-  const v = password.value.toLowerCase().replace(/\s+/g,"");
+  const v=password.value.toLowerCase().replace(/\s+/g,"");
 
   if(v==="17nisan"){
     secret.style.display="block";
-    showToast("💖 BİLİYODUMMM!");
-    attempts = 0;
-    brokenMode = false;
-    maxHearts = 18;
-    startHearts();
+    showToast("💖 Biliyodummm!");
+    attempts=0;
+    disableBoom=false;
+    brokenMode=false;
+    heartsEnabled=true;
+    MAX=18;
     return;
   }
 
   attempts++;
 
   if(attempts===1){
-    maxHearts = 8;
-    showToast("😌 Olsun… ilk seferin normal 💗");
-  }
-  else if(attempts===2){
-    stopHearts();
+    MAX=10;
+    disableBoom=true;
+    showToast("🌸 Olsun… ilk seferin normal ✨");
+  }else if(attempts===2){
+    heartsEnabled=false;
     showToast("😐 Umarım bu bir şakadır…");
-  }
-  else{
-    brokenMode = true;
-    startHearts();
-    showToast("😶 Tamam… öyle olsun 💔");
+  }else{
+    brokenMode=true;
+    heartsEnabled=true;
+    disableBoom=true;
+    showToast("💔 Tamam… öyle olsun.");
   }
 }
 </script>
