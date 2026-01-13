@@ -2,14 +2,13 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aşkım 💖</title>
 
 <style>
 html,body{
   margin:0;padding:0;width:100%;height:100%;
-  overflow:hidden;touch-action:none;position:fixed;
-  font-family:Arial,sans-serif;
+  overflow:hidden;font-family:Arial,sans-serif;
 }
 body{
   background:
@@ -18,60 +17,48 @@ body{
     center/cover no-repeat;
 }
 
-/* Toast */
-.toast{
-  position:fixed;top:-120px;left:50%;
-  transform:translateX(-50%);
-  background:linear-gradient(135deg,#ff4d6d,#ff8fa3);
-  color:white;padding:14px 26px;border-radius:30px;
-  transition:.6s;z-index:1000;
-}
-.toast.show{top:18px}
-
-/* Ana kutu */
+/* Kart */
 .container{
   position:fixed;inset:0;
   display:flex;align-items:center;justify-content:center;
-  z-index:10;
+  pointer-events:none;
 }
 .card{
+  pointer-events:auto;
   width:360px;max-width:92vw;
   padding:18px;border-radius:20px;
   background:rgba(0,0,0,.35);
   color:white;text-align:center;
+  z-index:10;
 }
-
-.lock input,.lock button{
-  width:100%;max-width:220px;
-  padding:10px;border-radius:20px;border:none;
-}
-.lock button{margin-top:8px;background:#ff4d6d;color:white}
-
-.secret{display:none;margin-top:12px}
 
 /* Kalpler */
 .heart{
-  position:fixed;bottom:-60px;
+  position:fixed;
+  bottom:-60px;
   font-size:32px;
   animation:float 6s linear forwards;
-  z-index:1;cursor:pointer;
+  z-index:50; /* EN ÜST */
+  pointer-events:auto;
 }
 @keyframes float{
   to{transform:translateY(-120vh);opacity:0}
 }
 .boom{
-  animation:boom .4s ease-out forwards!important;
+  animation:boom .35s ease-out forwards!important;
 }
 @keyframes boom{
-  to{transform:scale(2.2);opacity:0}
+  to{transform:scale(2.3);opacity:0}
 }
 
-/* Sevgi yazısı */
+/* Yazı */
 .loveText{
-  position:fixed;font-size:15px;
-  color:white;text-shadow:0 0 8px pink;
+  position:fixed;
+  color:white;
+  text-shadow:0 0 8px pink;
   animation:textUp 1.2s forwards;
-  pointer-events:none;z-index:2;
+  pointer-events:none;
+  z-index:60;
 }
 @keyframes textUp{
   to{transform:translateY(-40px);opacity:0}
@@ -81,95 +68,102 @@ body{
 
 <body>
 
-<div id="toast" class="toast"></div>
-
 <div class="container">
-<div class="card">
-<h1>💖 GÜZEL KARIM BENİM<br>SENİ ÇOK SEVİYORUM 💖</h1>
+  <div class="card">
+    <h2>💖 GÜZEL KARIM BENİM 💖</h2>
+    <div id="counter"></div>
+    <div id="birthday"></div>
 
-<div id="counter"></div>
-<div id="birthday"></div>
+    <div class="lock">
+      <input id="password" placeholder="Şifre">
+      <button onclick="check()">Giriş</button>
+    </div>
 
-<div class="lock">
-🔒 İpucu: <b>Doğum günüm 🤔</b><br>
-<input id="password" placeholder="Şifreyi yaz">
-<button onclick="check()">Giriş</button>
-</div>
-
-<div class="secret" id="secret">
-💌 Bu sesi sadece sana kaydettim 💖<br><br>
-<audio controls src="sesim.mp3" style="width:100%"></audio>
-</div>
-</div>
+    <div id="secret" style="display:none;margin-top:10px">
+      <audio controls src="sesim.mp3" style="width:100%"></audio>
+    </div>
+  </div>
 </div>
 
 <script>
-document.addEventListener("touchmove",e=>e.preventDefault(),{passive:false});
+/* ================= 📅 SAYAÇLAR (UTC – ASLA ŞAŞMAZ) ================= */
 
-/* ================== 📅 SAYAÇLAR ================== */
-/* 4 Ocak = 1. gün */
-const startDate = new Date(2026,0,4);
-startDate.setHours(0,0,0,0);
+// 4 Ocak = 1. gün
+const START_UTC = Date.UTC(2026,0,4);
+const BDAY_MONTH = 1; // Şubat
+const BDAY_DAY = 9;
 
 const counter = document.getElementById("counter");
 const birthday = document.getElementById("birthday");
 
-function todayZero(){
-  const d=new Date();
-  d.setHours(0,0,0,0);
-  return d;
-}
-
 function updateCounters(){
-  const today=todayZero();
+  const now = new Date();
+  const todayUTC = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate()
+  );
 
-  // Tanışma sayacı
-  const diffDays = Math.floor((today - startDate) / 86400000);
-const daysTogether = diffDays < 0 ? 1 : diffDays + 1;
+  // Tanışma
+  const daysTogether =
+    Math.floor((todayUTC - START_UTC) / 86400000) + 1;
 
-  // Doğum günü (9 Şubat)
-  let bd=new Date(today.getFullYear(),1,9);
-  bd.setHours(0,0,0,0);
-  if(today>bd){
-    bd=new Date(today.getFullYear()+1,1,9);
-    bd.setHours(0,0,0,0);
+  counter.innerHTML = `💞 Tanışalı ${daysTogether} gün oldu`;
+
+  // Doğum günü
+  let bdUTC = Date.UTC(now.getUTCFullYear(), BDAY_MONTH, BDAY_DAY);
+  if (todayUTC > bdUTC) {
+    bdUTC = Date.UTC(now.getUTCFullYear()+1, BDAY_MONTH, BDAY_DAY);
   }
-  const daysLeft =
-    Math.ceil((bd - today) / 86400000);
-  birthday.innerHTML =
-    `🎈 Doğum gününe ${daysLeft} gün kaldı`;
+  const left = Math.ceil((bdUTC - todayUTC) / 86400000);
+  birthday.innerHTML = `🎈 Doğum gününe ${left} gün kaldı`;
 }
 
 updateCounters();
-setInterval(updateCounters,60000);
+setInterval(updateCounters, 60000);
 
-/* ================== Toast ================== */
-const toast=document.getElementById("toast");
-function showToast(m){
-  toast.textContent=m;
-  toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show"),2600);
-}
-
-/* ================== Sevgi Yazıları ================== */
+/* ================= ❤️ SEVGİ YAZILARI ================= */
 const loveMessages = [
-  "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Ömrüm 💘",
-  "Ruh eşim 💫","Bitanem 💗","Her şeyim 💝","Canımın içi 💞",
-  "Hayatım 🥰","Nefesimsin 💨💓","İyi ki varsın ✨",
-  "Gülüşüne kurban 🌸","Kalbimin sahibi ❤️","Sana aşığım 💘",
-  "Dünyam 🌍💖","Vazgeçilmezim 💞","Bir tanem 💕",
-  "Mutluluğum 😊💖","Aklım kalbim sensin 💓",
-  "Sonsuzum ♾️💖","Benimsin 💞","Sevgilim 💕",
-  "Tek gerçeğim 💖","Cennetim 🌹","Masalım ✨💗",
-  "İyi ki benimlesin 💓","Kalbim sana ait 🔐❤️",
-  "Aşkın en güzeli sensin 💘","Kalbime yazıldın 💖",
-  "Gözlerimin nuru ✨","Kalbimde evin var 🏡❤️",
-  "Adını kalbime kazıdım 💘","Bir ömür sen 💞",
+  "Seni seviyorum 💖",
+  "Aşkım 💕",
+  "Kalbim sensin 💓",
+  "Ömrüm 💘",
+  "Ruh eşim 💫",
+  "Bitanem 💗",
+  "Her şeyim 💝",
+  "Canımın içi 💞",
+  "Hayatım 🥰",
+  "Nefesimsin 💨💓",
+  "İyi ki varsın ✨",
+  "Gülüşüne kurban 🌸",
+  "Kalbimin sahibi ❤️",
+  "Sana aşığım 💘",
+  "Dünyam 🌍💖",
+  "Vazgeçilmezim 💞",
+  "Bir tanem 💕",
+  "Mutluluğum 😊💖",
+  "Aklım kalbim sensin 💓",
+  "Sonsuzum ♾️💖",
+  "Benimsin 💞",
+  "Sevgilim 💕",
+  "Tek gerçeğim 💖",
+  "Cennetim 🌹",
+  "Masalım ✨💗",
+  "İyi ki benimlesin 💓",
+  "Kalbim sana ait 🔐❤️",
+  "Aşkın en güzeli sensin 💘",
+  "Kalbime yazıldın 💖",
+  "Gözlerimin nuru ✨",
+  "Kalbimde evin var 🏡❤️",
+  "Adını kalbime kazıdım 💘",
+  "Bir ömür sen 💞",
   "Rüyalarımın gerçeği ✨💖",
   "Kalbim hep seni seçer ❤️",
   "Sana her gün yeniden aşık oluyorum 💕",
-  "Kalbim sen diye atıyor 💓","Sen benim mucizemsin ✨",
-  "Aşk sana çok yakışıyor 💘","Ben seni çok sevdim 💖",
+  "Kalbim sen diye atıyor 💓",
+  "Sen benim mucizemsin ✨",
+  "Aşk sana çok yakışıyor 💘",
+  "Ben seni çok sevdim 💖",
   "Kalbimin en güzel yeri sen 💗",
   "Sen varken her şey tamam 💞",
   "İyi ki kalbimdesin ❤️",
@@ -177,17 +171,16 @@ const loveMessages = [
   "Kalbim sana emanet 🔐💖"
 ];
 
-/* ================== Kalpler ================== */
-let paused=false,broken=false;
+/* ================= ❤️ KALPLER ================= */
+let broken=false;
 
 setInterval(()=>{
-  if(paused) return;
   const h=document.createElement("div");
   h.className="heart";
   h.textContent=broken?"💔":"💖";
   h.style.left=Math.random()*100+"vw";
 
- h.addEventListener("pointerdown", e => {
+  h.addEventListener("pointerdown",e=>{
     if(broken) return;
     h.classList.add("boom");
 
@@ -199,33 +192,20 @@ setInterval(()=>{
     t.style.top=e.clientY+"px";
     document.body.appendChild(t);
 
-    setTimeout(()=>{h.remove();t.remove()},400);
+    setTimeout(()=>{h.remove();t.remove()},350);
   });
 
   document.body.appendChild(h);
   setTimeout(()=>h.remove(),6000);
-},280);
+},300);
 
-/* ================== Şifre ================== */
-let attempts=0;
+/* ================= 🔐 ŞİFRE ================= */
 function check(){
-  const v=password.value.toLowerCase().replace(/\s+/g,"");
-  if(v==="17nisan"){
+  if(password.value.replace(/\s+/g,"").toLowerCase()==="17nisan"){
     secret.style.display="block";
-    showToast("💖 BİLİYODUMMM!");
-    paused=false;broken=false;
-    return;
-  }
-  secret.style.display="none";
-  attempts++;
-  if(attempts===1)
-    showToast("😇 Olsun… ilk seferin normal 💕");
-  else if(attempts===2){
-    paused=true;
-    showToast("😐 Umarım bu bir şakadır…");
+    broken=false;
   }else{
-    broken=true;paused=false;
-    showToast("😌 Tamam… öyle olsun 💔");
+    broken=true;
   }
 }
 </script>
