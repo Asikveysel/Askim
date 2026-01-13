@@ -124,9 +124,8 @@ function updateCounters(){
   const today=todayZero();
 
   // Tanışma sayacı
-  const daysTogether =
-    Math.floor((today - startDate) / 86400000) + 1;
-  counter.innerHTML = `💞 Tanışalı ${daysTogether} gün oldu`;
+  const diffDays = Math.floor((today - startDate) / 86400000);
+const daysTogether = diffDays < 0 ? 1 : diffDays + 1;
 
   // Doğum günü (9 Şubat)
   let bd=new Date(today.getFullYear(),1,9);
@@ -188,7 +187,7 @@ setInterval(()=>{
   h.textContent=broken?"💔":"💖";
   h.style.left=Math.random()*100+"vw";
 
-  h.addEventListener("click",e=>{
+ h.addEventListener("pointerdown", e => {
     if(broken) return;
     h.classList.add("boom");
 
