@@ -153,93 +153,129 @@ h1{
 </div>
 
 <script>
-  
-
-/* TOAST */
-const toast=document.getElementById("toast");
+/* ================= TOAST ================= */
+const toast = document.getElementById("toast");
 function showToast(m){
-  toast.textContent=m;
+  toast.textContent = m;
   toast.classList.add("show");
   setTimeout(()=>toast.classList.remove("show"),2500);
 }
 
-/* SAYAÇLAR – 4 OCAK = 1. GÜN */
-function dayStart(d){d.setHours(0,0,0,0);return d;}
-function updateCounters(){
-  const today=dayStart(new Date());
-  const start=dayStart(new Date(2026,0,4));
-  const diff=Math.floor((today-start)/86400000)+1;
-  counter.textContent=`💞 Tanışalı ${diff} gün oldu`;
+/* ================= SAYAÇLAR ================= */
+function dayStart(d){ d.setHours(0,0,0,0); return d; }
 
-  let bd=dayStart(new Date(today.getFullYear(),1,9));
-  if(today>bd) bd=dayStart(new Date(today.getFullYear()+1,1,9));
-  birthday.textContent=`🎈 Doğum gününe ${Math.ceil((bd-today)/86400000)} gün kaldı`;
+function updateCounters(){
+  const today = dayStart(new Date());
+  const start = dayStart(new Date(2026,0,4)); // 4 Ocak
+  const diff = Math.floor((today-start)/86400000)+1;
+  counter.textContent = `💞 Tanışalı ${diff} gün oldu`;
+
+  let bd = dayStart(new Date(today.getFullYear(),1,9)); // 9 Şubat
+  if(today>bd) bd = dayStart(new Date(today.getFullYear()+1,1,9));
+  birthday.textContent = `🎈 Doğum gününe ${Math.ceil((bd-today)/86400000)} gün kaldı`;
 }
 updateCounters();
 setInterval(updateCounters,60000);
 
-/* SEVGİ YAZILARI – AYNI LİSTE */
-const loveMessages=[
-"Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Ömrüm 💘","Ruh eşim 💫",
-"Bitanem 💗","Her şeyim 💝","Canımın içi 💞","Hayatım 🥰","Nefesimsin 💨💓",
-"İyi ki varsın ✨","Gülüşüne kurban 🌸","Kalbimin sahibi ❤️","Sana aşığım 💘",
-"Dünyam 🌍💖","Vazgeçilmezim 💞","Bir tanem 💕","Mutluluğum 😊💖",
-"Aklım kalbim sensin 💓","Sonsuzum ♾️💖","Benimsin 💞","Sevgilim 💕",
-"Tek gerçeğim 💖","Cennetim 🌹","Masalım ✨💗","İyi ki benimlesin 💓",
-"Kalbim sana ait 🔐❤️","Aşkın en güzeli sensin 💘","Kalbime yazıldın 💖",
-"Gözlerimin nuru ✨","Kalbimde evin var 🏡❤️","Adını kalbime kazıdım 💘",
-"Bir ömür sen 💞","Rüyalarımın gerçeği ✨💖","Kalbim hep seni seçer ❤️",
-"Sana her gün yeniden aşık oluyorum 💕","Kalbim sen diye atıyor 💓",
-"Sen benim mucizemsin ✨","Aşk sana çok yakışıyor 💘","Ben seni çok sevdim 💖",
-"Kalbimin en güzel yeri sen 💗","Sen varken her şey tamam 💞",
-"İyi ki kalbimdesin ❤️","Sen benim en güzel alışkanlığımsın 💕",
-"Kalbim sana emanet 🔐💖"
+/* ================= SEVGİ MESAJLARI ================= */
+const loveMessages = [
+  "Seni seviyorum 💖","Aşkım 💕","Kalbim sensin 💓","Ömrüm 💘","Ruh eşim 💫",
+  "Bitanem 💗","Her şeyim 💝","Canımın içi 💞","Hayatım 🥰","Nefesimsin 💨💓",
+  "İyi ki varsın ✨","Gülüşüne kurban 🌸","Kalbimin sahibi ❤️","Sana aşığım 💘",
+  "Dünyam 🌍💖","Vazgeçilmezim 💞","Bir tanem 💕","Mutluluğum 😊💖",
+  "Aklım kalbim sensin 💓","Sonsuzum ♾️💖","Benimsin 💞","Sevgilim 💕",
+  "Tek gerçeğim 💖","Cennetim 🌹","Masalım ✨💗","İyi ki benimlesin 💓",
+  "Kalbim sana ait 🔐❤️","Aşkın en güzeli sensin 💘","Kalbime yazıldın 💖",
+  "Gözlerimin nuru ✨","Kalbimde evin var 🏡❤️","Adını kalbime kazıdım 💘",
+  "Bir ömür sen 💞","Rüyalarımın gerçeği ✨💖","Kalbim hep seni seçer ❤️",
+  "Sana her gün yeniden aşık oluyorum 💕","Kalbim sen diye atıyor 💓",
+  "Sen benim mucizemsin ✨","Aşk sana çok yakışıyor 💘","Ben seni çok sevdim 💖",
+  "Kalbimin en güzel yeri sen 💗","Sen varken her şey tamam 💞",
+  "İyi ki kalbimdesin ❤️","Sen benim en güzel alışkanlığımsın 💕",
+  "Kalbim sana emanet 🔐💖"
 ];
 
-/* ❤️ KALPLER – CLICK + TOUCH GARANTİ */
-setInterval(()=>{
-  const h=document.createElement("div");
-  h.className="heart";
-  h.textContent="💖";
-  h.style.left=Math.random()*100+"vw";
+/* ================= KALP SİSTEMİ ================= */
+let heartTimer = null;
+let maxHearts = 18;
+let brokenMode = false;
 
-  function boomHeart(e){
-    h.classList.add("boom");
-    const x=e.touches?e.touches[0].clientX:e.clientX;
-    const y=e.touches?e.touches[0].clientY:e.clientY;
+function startHearts(){
+  stopHearts();
+  heartTimer = setInterval(createHeart,300);
+}
 
-    const t=document.createElement("div");
-    t.className="loveText";
-    t.textContent=loveMessages[Math.floor(Math.random()*loveMessages.length)];
-    t.style.left=x+"px";
-    t.style.top=y+"px";
-    document.body.appendChild(t);
-    setTimeout(()=>t.remove(),1200);
+function stopHearts(){
+  if(heartTimer){
+    clearInterval(heartTimer);
+    heartTimer = null;
   }
+}
 
-  h.addEventListener("click",boomHeart);
-  h.addEventListener("touchstart",boomHeart);
+function createHeart(){
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.textContent = brokenMode ? "💔" : "💖";
+  h.style.left = Math.random()*100+"vw";
+
+  if(!brokenMode){
+    h.addEventListener("click", boomHeart);
+    h.addEventListener("touchstart", boomHeart);
+  }
 
   document.body.appendChild(h);
   setTimeout(()=>h.remove(),6000);
-},300);
 
-/* ŞİFRE */
-let attempts=0;
+  function boomHeart(e){
+    h.classList.add("boom");
+
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const t = document.createElement("div");
+    t.className = "loveText";
+    t.textContent = loveMessages[Math.floor(Math.random()*loveMessages.length)];
+    t.style.left = x+"px";
+    t.style.top = y+"px";
+    document.body.appendChild(t);
+
+    setTimeout(()=>t.remove(),1200);
+  }
+}
+
+startHearts();
+
+/* ================= ŞİFRE ================= */
+let attempts = 0;
+
 function check(){
-  const v=password.value.toLowerCase().replace(/\s+/g,"");
+  const v = password.value.toLowerCase().replace(/\s+/g,"");
+
   if(v==="17nisan"){
     secret.style.display="block";
     showToast("💖 BİLİYODUMMM!");
-    attempts=0;
+    attempts = 0;
+    brokenMode = false;
+    maxHearts = 18;
+    startHearts();
     return;
   }
+
   attempts++;
-  showToast(
-    attempts===1?"😌 Olsun… ilk seferin normal 💗":
-    attempts===2?"😐 Umarım bu bir şakadır…":
-    "😶 Tamam… öyle olsun 💔"
-  );
+
+  if(attempts===1){
+    maxHearts = 8;
+    showToast("😌 Olsun… ilk seferin normal 💗");
+  }
+  else if(attempts===2){
+    stopHearts();
+    showToast("😐 Umarım bu bir şakadır…");
+  }
+  else{
+    brokenMode = true;
+    startHearts();
+    showToast("😶 Tamam… öyle olsun 💔");
+  }
 }
 </script>
 
